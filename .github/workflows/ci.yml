@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
+  VERSION_MAJOR: '1'
+  VERSION_MINOR: '0'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: '🔄 Checkout'
+        uses: actions/checkout@v4
+
+      - name: '🔧 Setup .NET'
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: '🔍 Calculate version'
+        id: version
+        shell: 'bash'
+        run: |
+          echo "🔍 Calculating next version for ${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.x"
+
+          PATTERN="v${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.*"
+          echo "📋 Looking for existing tags matching pattern: $PATTERN"
+
+          # List all matching tags for debugging
+          echo "🔍 All tags matching pattern:"
+          git tag -l "$PATTERN" || echo "No tags found"
+
+          # Find the highest patch version for this major.minor using a more robust approach
+          LATEST_PATCH=$(git tag -l "v${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.*" | \
+            grep -E "^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.[0-9]+$" | \
+            sed "s/^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.//" | \
+            sort -n | \
+            tail -1)
+
+          if [ -z "$LATEST_PATCH" ]; then
+            echo "ℹ️  No existing tags found for ${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.x, starting with patch 0"
+            NEXT_PATCH=0
+          else
+            echo "🔍 Found latest patch version: $LATEST_PATCH"
+            NEXT_PATCH=$((LATEST_PATCH + 1))
+          fi
+
+          FULL_VERSION="${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.$NEXT_PATCH"
+
+          echo "🎯 Next version will be: v$FULL_VERSION"
+
+          # Set outputs
+          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_OUTPUT
+          echo "MAJOR=${{ env.VERSION_MAJOR }}" >> $GITHUB_OUTPUT
+          echo "MINOR=${{ env.VERSION_MINOR }}" >> $GITHUB_OUTPUT
+          echo "PATCH=$NEXT_PATCH" >> $GITHUB_OUTPUT
+
+          # Also set as environment variables for subsequent steps
+          echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+
+      - name: '🔄 Restore'
+        run: dotnet restore Plugin.ByteArrays.slnx
+
+      - name: '🔨 Build'
+        run: >
+          dotnet build Plugin.ByteArrays.slnx -c Release --no-restore
+          -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
+          -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
+          -p:GeneratePackageOnBuild=true
+          -p:PackageOutputPath=output/packages
+
+      - name: '🧪 Test with coverage (95% min)'
+        run: >
+          dotnet test Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
+          -c Release --no-build
+          /p:CollectCoverage=true
+          /p:CoverletOutput=TestResults/coverage/
+          /p:CoverletOutputFormat=cobertura
+          /p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"
+          /p:Threshold=95
+          /p:ThresholdType=line
+
+      - name: '📦 Upload coverage artifact'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cobertura
+          path: Plugin.ByteArrays.Tests/TestResults/coverage/coverage.cobertura.xml
+
+      - name: '📦 Upload NuGet packages'
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: output/packages/**/*
+
+      - name: '🏷️ Create tag'
+        run: |
+            echo "🏷️  Creating tag v${{ steps.version.outputs.FULL_VERSION }}"
+
+            if [ $(git tag -l "v${{ steps.version.outputs.FULL_VERSION }}") ]; then
+                echo "⚠️  Tag v${{ steps.version.outputs.FULL_VERSION }} already exists"
+                exit 1
+            else
+                echo "✅ Creating new tag v${{ steps.version.outputs.FULL_VERSION }}"
+                git tag -a "v${{ steps.version.outputs.FULL_VERSION }}" -m "Release v${{ steps.version.outputs.FULL_VERSION }}"
+                git push origin "v${{ steps.version.outputs.FULL_VERSION }}"
+                echo "🚀 Tag v${{ steps.version.outputs.FULL_VERSION }} created and pushed"
+            fi
+
+      - name: '📀 Create Release'
+        run: |
+            echo "📀 Creating GitHub release for v${{ steps.calculation.outputs.FULL_VERSION }}"
+
+            gh auth login --with-token <<< "${{ github.token }}"
+
+            # Check if release already exists
+            if gh release view "v${{ steps.calculation.outputs.FULL_VERSION }}" --repo ${{ github.repository }} >/dev/null 2>&1; then
+                echo "⚠️  Release v${{ steps.calculation.outputs.FULL_VERSION }} already exists"
+            else
+                echo "✅ Creating new release v${{ steps.calculation.outputs.FULL_VERSION }}"
+                gh release create "v${{ steps.calculation.outputs.FULL_VERSION }}" \
+                --title "Release v${{ steps.calculation.outputs.FULL_VERSION }}" \
+                --generate-notes \
+                --target "${{ github.sha }}" \
+                --repo ${{ github.repository }}
+                echo "🚀 Release v${{ steps.calculation.outputs.FULL_VERSION }} created successfully"
+            fi
