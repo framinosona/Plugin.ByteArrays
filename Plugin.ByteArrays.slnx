@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Plugin.ByteArrays/Plugin.ByteArrays.csproj" />
+  <Project Path="Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj" />
+</Solution>
