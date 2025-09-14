@@ -40,21 +40,18 @@ jobs:
           echo "🔍 All tags matching pattern:"
           git tag -l "$PATTERN" || echo "No tags found"
 
-          # Find the highest patch version for this major.minor using a more robust approach
-          LATEST_PATCH=$(git tag -l "v${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.*" | \
-            grep -E "^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.[0-9]+$" | \
-            sed "s/^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.//" | \
-            sort -n | \
-            tail -1)
-
-          if [ -z "$LATEST_PATCH" ]; then
+          TAGS=$(git tag -l "v${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.*")
+          if [ -z "$TAGS" ]; then
             echo "ℹ️  No existing tags found for ${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.x, starting with patch 0"
             NEXT_PATCH=0
           else
-            echo "🔍 Found latest patch version: $LATEST_PATCH"
-            NEXT_PATCH=$((LATEST_PATCH + 1))
+            LATEST_PATCH=$(echo "$TAGS" | grep -E "^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.[0-9]+$" | sed "s/^v${{ env.VERSION_MAJOR }}\.${{ env.VERSION_MINOR }}\.//" | sort -n | tail -1)
+            if [ -z "$LATEST_PATCH" ]; then
+              NEXT_PATCH=0
+            else
+              NEXT_PATCH=$((LATEST_PATCH + 1))
+            fi
           fi
-
           FULL_VERSION="${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.$NEXT_PATCH"
 
           echo "🎯 Next version will be: v$FULL_VERSION"
