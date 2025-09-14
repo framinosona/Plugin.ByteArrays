@@ -14,6 +14,9 @@ public class ByteArrayExtensions_ComplexTypeTests
     [Flags]
     private enum Perms : ushort { None = 0, Read = 1, Write = 2, Execute = 4 }
 
+    private enum Level : int { Low = 1, High = 2 }
+    private enum BigEnum : ulong { A = 1UL, B = 2UL }
+
     [Fact]
     public void ToVersion_And_Default()
     {
@@ -63,5 +66,22 @@ public class ByteArrayExtensions_ComplexTypeTests
         Action act = () => invalid.ToEnum<Perms>(0);
         act.Should().Throw<ArgumentException>();
     }
-}
 
+    [Fact]
+    public void ToEnum_Int32_And_UInt64_Sizes()
+    {
+        // 4-byte enum
+        var e4 = (int)Level.High;
+        var bytes4 = BitConverter.GetBytes(e4);
+        var p = 0;
+        bytes4.ToEnum<Level>(ref p).Should().Be(Level.High);
+        p.Should().Be(sizeof(int));
+
+        // 8-byte enum
+        var e8 = (ulong)BigEnum.B;
+        var bytes8 = BitConverter.GetBytes(e8);
+        p = 0;
+        bytes8.ToEnum<BigEnum>(ref p).Should().Be(BigEnum.B);
+        p.Should().Be(sizeof(ulong));
+    }
+}

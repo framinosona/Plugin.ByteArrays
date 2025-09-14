@@ -71,6 +71,7 @@ public class ByteArrayExtensions_FloatingAndStringTests
         data.ToHexString(":", prefix: "", upperCase: false).Should().Be("00:0a:ff:42");
 
         ByteArrayExtensions.FromHexString("00 0A-FF:42").Should().BeEquivalentTo(data);
+        ByteArrayExtensions.FromHexString("0X0A").Should().BeEquivalentTo(new byte[] {0x0A});
         Action act = () => ByteArrayExtensions.FromHexString("0");
         act.Should().Throw<ArgumentException>();
         Action act2 = () => ByteArrayExtensions.FromHexString("GG");

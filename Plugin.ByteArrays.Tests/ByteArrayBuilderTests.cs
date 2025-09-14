@@ -9,6 +9,12 @@ public class ByteArrayBuilderTests
 {
     private enum Small : byte { A = 1, B = 2 }
     private enum Big : ulong { Max = ulong.MaxValue }
+    private enum SByteEnum : sbyte { M1 = -1, P1 = 1 }
+    private enum ShortEnum : short { S = -2 }
+    private enum UShortEnum : ushort { U = 3 }
+    private enum IntEnum : int { I = 4 }
+    private enum UIntEnum : uint { U = 5 }
+    private enum LongEnum : long { L = 6 }
 
     [Fact]
     public void ToByteArray_MaxSize_Throws_When_Exceeded()
@@ -54,6 +60,34 @@ public class ByteArrayBuilderTests
     }
 
     [Fact]
+    public async Task Append_Null_And_DisposeAsync_Covered()
+    {
+        await using var b = new ByteArrayBuilder();
+        b.Append<string>(null!).ToByteArray().Should().BeEmpty();
+        await b.DisposeAsync();
+    }
+
+    [Fact]
+    public void Invoke_Private_AppendEnum_Generic_Via_Reflection()
+    {
+        using var b = new ByteArrayBuilder();
+        var mi = typeof(ByteArrayBuilder)
+            .GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            .Single(m => m.Name == "AppendEnum" && m.IsGenericMethodDefinition);
+        foreach (var t in new[]
+                 {
+                     typeof(Small), typeof(SByteEnum), typeof(ShortEnum), typeof(UShortEnum),
+                     typeof(IntEnum), typeof(UIntEnum), typeof(LongEnum), typeof(Big)
+                 })
+        {
+            var g = mi.MakeGenericMethod(t);
+            var value = Enum.GetValues(t).GetValue(0)!;
+            g.Invoke(b, new object[] { value });
+        }
+        b.ToByteArray().Should().NotBeEmpty();
+    }
+
+    [Fact]
     public void Append_Decimal_Writes16Bytes()
     {
         using var b = new ByteArrayBuilder();
@@ -91,4 +125,3 @@ public class ByteArrayBuilderTests
         act.Should().Throw<FormatException>();
     }
 }
-

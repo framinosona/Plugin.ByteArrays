@@ -8,16 +8,16 @@ namespace Plugin.ByteArrays.Tests;
 public class ByteArrayExtensions_ArrayManipulationTests
 {
     [Fact]
-    public void TrimEnd_MutatesArray_And_NonDestructive_Works()
+    public void TrimEnd_ReturnsNewArray_And_NonDestructive_Works()
     {
         var arr = new byte[] {1,2,0,0};
         var trimmedCopy = arr.TrimEndNonDestructive();
         trimmedCopy.Should().Equal(1,2);
         arr.Should().Equal(1,2,0,0); // original untouched by non-destructive
 
-        var mutated = arr.TrimEnd();
-        mutated.Should().Equal(1,2);
-        arr.Should().Equal(1,2); // array mutated
+        var trimmed = arr.TrimEnd();
+        trimmed.Should().Equal(1,2);
+        arr.Should().Equal(1,2,0,0); // original array still unchanged (extension methods can't mutate)
     }
 
     [Fact]

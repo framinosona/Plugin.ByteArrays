@@ -21,6 +21,8 @@ public class ObjectToByteArrayExtensionsTests
     public void Hex_Base64_StringToBytes()
     {
         "0A0BFF".HexStringToByteArray().Should().Equal(0x0A, 0x0B, 0xFF);
+        Action odd = () => "ABC".HexStringToByteArray();
+        odd.Should().Throw<ArgumentException>();
         var b64 = Convert.ToBase64String(new byte[] {1,2,3});
         b64.Base64StringToByteArray().Should().Equal(1,2,3);
     }
@@ -34,4 +36,3 @@ public class ObjectToByteArrayExtensionsTests
         new byte[] {1,2}.ToByteArray().Should().Equal(1,2);
     }
 }
-
