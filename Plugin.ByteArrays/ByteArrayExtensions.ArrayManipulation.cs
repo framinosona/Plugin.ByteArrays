@@ -9,33 +9,15 @@ public static partial class ByteArrayExtensions
 
     /// <summary>
     ///     Removes trailing bytes with the specified value from the array.
-    ///     This method modifies the original array for backward compatibility.
-    ///     Consider using TrimEndNonDestructive for a safer, non-mutating approach.
+    ///     This method returns a new trimmed array and does not modify the original.
+    ///     Use TrimEndNonDestructive for clarity or this method for backward compatibility.
     /// </summary>
     /// <param name="array">The byte array to trim. Cannot be null.</param>
     /// <param name="byteValueToTrim">The byte value to trim from the end. Default is 0.</param>
-    /// <returns>The modified array with trailing bytes removed.</returns>
+    /// <returns>A new array with trailing bytes removed.</returns>
     public static byte[] TrimEnd(this byte[] array, byte byteValueToTrim = 0)
     {
-        if (array.Length == 0)
-        {
-            return array;
-        }
-
-        var lastIndex = Array.FindLastIndex(array, b => b != byteValueToTrim);
-
-        if (lastIndex < 0)
-        {
-            // All bytes are the trim value - resize to empty
-            Array.Resize(ref array, 0);
-        }
-        else if (lastIndex < array.Length - 1)
-        {
-            // Trim needed
-            Array.Resize(ref array, lastIndex + 1);
-        }
-
-        return array;
+        return TrimEndNonDestructive(array, byteValueToTrim);
     }
 
     /// <summary>
