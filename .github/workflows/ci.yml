@@ -88,20 +88,26 @@ jobs:
           /p:ThresholdType=line
 
       - name: '📦 Upload coverage artifact'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-cobertura
           path: Plugin.ByteArrays.Tests/TestResults/coverage/coverage.cobertura.xml
 
       - name: '📦 Upload NuGet packages'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: packages
           path: output/packages/**/*
 
       - name: '🏷️ Create tag'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
             echo "🏷️  Creating tag v${{ steps.version.outputs.FULL_VERSION }}"
+
+            git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+            git config --local user.name "${{ github.actor }}"
 
             if [ $(git tag -l "v${{ steps.version.outputs.FULL_VERSION }}") ]; then
                 echo "⚠️  Tag v${{ steps.version.outputs.FULL_VERSION }} already exists"
@@ -114,20 +120,21 @@ jobs:
             fi
 
       - name: '📀 Create Release'
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
-            echo "📀 Creating GitHub release for v${{ steps.calculation.outputs.FULL_VERSION }}"
+            echo "📀 Creating GitHub release for v${{ steps.version.outputs.FULL_VERSION }}"
 
             gh auth login --with-token <<< "${{ github.token }}"
 
             # Check if release already exists
-            if gh release view "v${{ steps.calculation.outputs.FULL_VERSION }}" --repo ${{ github.repository }} >/dev/null 2>&1; then
-                echo "⚠️  Release v${{ steps.calculation.outputs.FULL_VERSION }} already exists"
+            if gh release view "v${{ steps.version.outputs.FULL_VERSION }}" --repo ${{ github.repository }} >/dev/null 2>&1; then
+                echo "⚠️  Release v${{ steps.version.outputs.FULL_VERSION }} already exists"
             else
-                echo "✅ Creating new release v${{ steps.calculation.outputs.FULL_VERSION }}"
-                gh release create "v${{ steps.calculation.outputs.FULL_VERSION }}" \
-                --title "Release v${{ steps.calculation.outputs.FULL_VERSION }}" \
+                echo "✅ Creating new release v${{ steps.version.outputs.FULL_VERSION }}"
+                gh release create "v${{ steps.version.outputs.FULL_VERSION }}" \
+                --title "Release v${{ steps.version.outputs.FULL_VERSION }}" \
                 --generate-notes \
                 --target "${{ github.sha }}" \
                 --repo ${{ github.repository }}
-                echo "🚀 Release v${{ steps.calculation.outputs.FULL_VERSION }} created successfully"
+                echo "🚀 Release v${{ steps.version.outputs.FULL_VERSION }} created successfully"
             fi
