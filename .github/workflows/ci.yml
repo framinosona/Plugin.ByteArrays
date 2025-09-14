@@ -83,7 +83,7 @@ jobs:
           /p:CollectCoverage=true
           /p:CoverletOutput=TestResults/coverage/
           /p:CoverletOutputFormat=cobertura
-          /p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"
+          '/p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"'
           /p:Threshold=95
           /p:ThresholdType=line
 
