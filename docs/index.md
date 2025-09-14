@@ -82,12 +82,7 @@ Search and compare byte arrays:
 
 | Section | Description |
 |---------|-------------|
-| [API Reference](~/api/Plugin.ByteArrays.yml) | Complete API documentation |
-| [ByteArrayBuilder](articles/bytearray-builder.md) | Fluent byte array construction |
-| [Reading Data](articles/reading-data.md) | Extract primitives and objects |
-| [Array Operations](articles/array-operations.md) | Manipulation and utilities |
-| [Pattern Matching](articles/pattern-matching.md) | Search and comparison |
-| [Best Practices](articles/best-practices.md) | Performance and safety tips |
+| [API Reference](/api/Plugin.ByteArrays.html) | Complete API documentation |
 
 ---
 
