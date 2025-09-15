@@ -16,6 +16,10 @@ permissions:
   pull-requests: write  # Needed to post comments on PRs (EnricoMi/publish-unit-test-result-action requires this)
   issues: read          # Needed to read issues (EnricoMi/publish-unit-test-result-action requires this)
 
+defaults:
+  run:
+    shell: bash
+
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
@@ -41,7 +45,6 @@ jobs:
       # ============================ VERSION ============================
       - name: '🔍 Calculate version'
         id: version
-        shell: 'bash'
         run: |
           echo "🔍 Calculating next version for ${{ env.VERSION_MAJOR }}.${{ env.VERSION_MINOR }}.x"
 
@@ -95,11 +98,9 @@ jobs:
 
       # ============================ BUILD ============================
       - name: '🔄 Restore'
-        shell: bash
         run: dotnet restore ${{ github.workspace }}/Plugin.ByteArrays.slnx
 
       - name: '🔨 Build'
-        shell: bash
         run: >
           dotnet build ${{ github.workspace }}/Plugin.ByteArrays.slnx
           -c Release
@@ -118,7 +119,6 @@ jobs:
 
       # ============================ TESTS & COVERAGE ============================
       - name: '🧪 Test with coverage (95% min)'
-        shell: bash
         run: >
           dotnet test ${{ github.workspace }}/Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
           -c Release
@@ -146,7 +146,6 @@ jobs:
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
         if: github.ref == 'refs/heads/main'
-        shell: bash
         run: |
           if [ ! -f .config/dotnet-tools.json ]; then
             echo "📝 Creating tool manifest..."
@@ -156,7 +155,6 @@ jobs:
 
       - name: '📚 Generate Documentation'
         if: github.ref == 'refs/heads/main'
-        shell: bash
         run: |
           echo "📚 Generating documentation..."
           dotnet docfx metadata ${{ github.workspace }}/Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/Plugin.ByteArrays.Docs/api
@@ -197,7 +195,6 @@ jobs:
           path: ${{ github.workspace }}/packages
 
       - name: '📦 Push Packages to NuGet.org'
-        shell: bash
         run: dotnet nuget push ${{ github.workspace }}/packages/*.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
 
   tag-and-release:
@@ -214,7 +211,6 @@ jobs:
 
       # ============================ TAGGING ============================
       - name: '🏷️ Create tag'
-        shell: bash
         if: github.ref == 'refs/heads/main'
         run: |
             echo "🏷️  Creating tag v${{ needs.calculate-version.outputs.FULL_VERSION }}"
@@ -233,7 +229,6 @@ jobs:
             fi
 
       - name: '📀 Create Release'
-        shell: bash
         if: github.ref == 'refs/heads/main'
         run: |
             echo "📀 Creating GitHub release for v${{ needs.calculate-version.outputs.FULL_VERSION }}"
