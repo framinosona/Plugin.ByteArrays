@@ -169,7 +169,7 @@ jobs:
 
       - name: "📦 Upload GitHub Pages artifact"
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
           name: github-pages
