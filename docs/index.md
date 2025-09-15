@@ -82,7 +82,7 @@ Search and compare byte arrays:
 
 | Section | Description |
 |---------|-------------|
-| [API Reference](/api/Plugin.ByteArrays.html) | Complete API documentation |
+| [API Reference](xref:Plugin.ByteArrays.html) | Complete API documentation |
 
 ---
 

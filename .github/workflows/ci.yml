@@ -79,25 +79,33 @@ jobs:
           -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
-          -p:PackageOutputPath=output/packages
+          -p:PackageOutputPath=${{ github.workspace }}/output/packages
+
+      - name: '📦 Upload NuGet packages'
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: ${{ github.workspace }}/output/packages
+          if-no-files-found: error
+
 
       - name: '🧪 Test with coverage (95% min)'
+        shell: bash
         run: >
           dotnet test Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
           -c Release --no-build
           /p:CollectCoverage=true
-          /p:CoverletOutput=TestResults/coverage/
+          /p:CoverletOutput=${{ github.workspace }}/output/tests
           /p:CoverletOutputFormat=cobertura
           '/p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"'
           /p:Threshold=95
           /p:ThresholdType=line
 
       - name: '📦 Upload coverage artifact'
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-cobertura
-          path: Plugin.ByteArrays.Tests/TestResults/coverage/coverage.cobertura.xml
+          path: ${{ github.workspace }}/output/tests/**/*.cobertura.xml
 
       - name: '📦 Upload NuGet packages'
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
@@ -107,6 +115,7 @@ jobs:
           path: output/packages/**/*
 
       - name: '🏷️ Create tag'
+        shell: bash
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
             echo "🏷️  Creating tag v${{ steps.version.outputs.FULL_VERSION }}"
@@ -125,6 +134,7 @@ jobs:
             fi
 
       - name: '📀 Create Release'
+        shell: bash
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         run: |
             echo "📀 Creating GitHub release for v${{ steps.version.outputs.FULL_VERSION }}"
