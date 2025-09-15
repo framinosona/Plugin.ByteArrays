@@ -31,5 +31,10 @@
     <Using Include="Xunit" />
     <Using Include="FluentAssertions" />
   </ItemGroup>
-</Project>
+  <PropertyGroup>
+    <TestOutputPath Condition="'$(TestOutputPath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `../output/tests`))</TestOutputPath>
 
+    <VSTestResultsDirectory>$(TestOutputPath)</VSTestResultsDirectory>
+    <CoverletOutput>$(TestOutputPath)/</CoverletOutput>
+  </PropertyGroup>
+</Project>
