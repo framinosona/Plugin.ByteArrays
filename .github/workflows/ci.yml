@@ -122,10 +122,11 @@ jobs:
           files: |
             ${{ github.workspace }}/output/tests/test-results.trx
 
-      - name: '📦 Move Coverage Report'
-        shell: bash
-        run: |
-          mv ${{ github.workspace }}/code-coverage-results.md ${{ github.workspace }}/Plugin.ByteArrays.Docs/coverage.md
+      - name: '📚 Generate Markdown'
+        uses: alan-null/cobertura-to-markdown@v1
+        with:
+          coverage_file: "${{ github.workspace }}/output/tests/coverage.cobertura.xml"
+          output_file: "${{ github.workspace }}/Plugin.ByteArrays.Docs/coverage.md"
 
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
