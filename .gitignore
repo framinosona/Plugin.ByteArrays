@@ -474,3 +474,7 @@ riderModule.iml
 /_ReSharper.Caches/```
 
 docs/site/
+
+Plugin.ByteArrays.Docs/site/
+
+Plugin.ByteArrays.Docs/api/

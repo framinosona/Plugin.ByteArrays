@@ -3,7 +3,8 @@
     {
       "src": [
         {
-          "files": ["Plugin.ByteArrays/Plugin.ByteArrays.csproj"]
+          "files": ["Plugin.ByteArrays.csproj"],
+          "src": "../Plugin.ByteArrays"
         }
       ],
       "includePrivateMembers": false,
