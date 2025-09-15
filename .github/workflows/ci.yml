@@ -18,7 +18,7 @@ env:
   VERSION_MINOR: '0'
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: '🔄 Checkout'
@@ -32,6 +32,7 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
+      # ============================ VERSION ============================
       - name: '🔍 Calculate version'
         id: version
         shell: 'bash'
@@ -70,12 +71,15 @@ jobs:
           # Also set as environment variables for subsequent steps
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
 
+      # ============================ BUILD ============================
       - name: '🔄 Restore'
         run: dotnet restore Plugin.ByteArrays.slnx
 
       - name: '🔨 Build'
         run: >
-          dotnet build Plugin.ByteArrays.slnx -c Release --no-restore
+          dotnet build Plugin.ByteArrays.slnx
+          -c Release
+          -no-restore
           -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
@@ -88,18 +92,19 @@ jobs:
           path: ${{ github.workspace }}/output/packages
           if-no-files-found: error
 
-
+      # ============================ TESTS & COVERAGE ============================
       - name: '🧪 Test with coverage (95% min)'
         shell: bash
         run: >
           dotnet test Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
-          -c Release --no-build
-          /p:CollectCoverage=true
-          /p:CoverletOutput=${{ github.workspace }}/output/tests
-          /p:CoverletOutputFormat=cobertura
-          '/p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"'
-          /p:Threshold=95
-          /p:ThresholdType=line
+          -c Release
+          --no-build
+          -p:CollectCoverage=true
+          -p:CoverletOutput=${{ github.workspace }}/output/tests
+          -p:CoverletOutputFormat=cobertura
+          -p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"
+          -p:Threshold=95
+          -p:ThresholdType=line
 
       - name: '📦 Upload coverage artifact'
         uses: actions/upload-artifact@v4
@@ -107,13 +112,33 @@ jobs:
           name: coverage-cobertura
           path: ${{ github.workspace }}/output/tests/**/*.cobertura.xml
 
-      - name: '📦 Upload NuGet packages'
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: actions/upload-artifact@v4
-        with:
-          name: packages
-          path: output/packages/**/*
+      # ============================ DOCS ============================
+      - name: '📚 Install DocFX'
+        shell: bash
+        run: |
+          if [ ! -f .config/dotnet-tools.json ]; then
+            echo "📝 Creating tool manifest..."
+            dotnet new tool-manifest
+          fi
+          dotnet tool install docfx
 
+      - name: '📚 Generate Documentation'
+        shell: bash
+        run: |
+          echo "📚 Generating documentation..."
+          dotnet docfx metadata Plugin.ByteArrays.Docs/docfx.json --output Plugin.ByteArrays.Docs/api
+          dotnet docfx build Plugin.ByteArrays.Docs/docfx.json --output Plugin.ByteArrays.Docs/site
+
+      - name: "📦 Upload GitHub Pages artifact"
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ github.workspace }}/docs
+
+      - name: "🚀 Deploy to GitHub Pages"
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # ============================ TAGGING ============================
       - name: '🏷️ Create tag'
         shell: bash
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
