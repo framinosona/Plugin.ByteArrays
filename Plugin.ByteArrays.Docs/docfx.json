@@ -28,6 +28,11 @@
       "_disableContribution": false,
       "pdf": false
     },
+    "sitemap": {
+      "baseUrl": "https://framinosona.github.io/Plugin.ByteArray/",
+      "priority": 0.1,
+      "changefreq": "monthly"
+    },
     "template": ["default", "modern"]
   },
   "serve": {
