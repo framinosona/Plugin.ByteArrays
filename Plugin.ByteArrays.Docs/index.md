@@ -1,6 +1,6 @@
-# 🗂️ Plugin.ByteArray Documentation
+# 🗂️ Plugin.ByteArrays Documentation
 
-Welcome to the **Plugin.ByteArray** documentation! This library provides a comprehensive set of utilities for working with byte arrays in .NET applications, designed for performance, safety, and ease of use.
+Welcome to the **Plugin.ByteArrays** documentation! This library provides a comprehensive set of utilities for working with byte arrays in .NET applications, designed for performance, safety, and ease of use.
 
 ---
 
@@ -10,7 +10,7 @@ Welcome to the **Plugin.ByteArray** documentation! This library provides a compr
 
 ```bash
 # Install from NuGet (when published)
-dotnet add package Plugin.ByteArray
+dotnet add package Plugin.ByteArrays
 ```
 
 ### Basic Usage
@@ -147,13 +147,13 @@ Console.WriteLine($"Processed {pos} bytes successfully");
 
 ## 📄 License
 
-This library is licensed under the **MIT License** - see the [LICENSE.md](https://github.com/framinosona/Plugin.ByteArray/blob/main/LICENSE.md) file for details.
+This library is licensed under the **MIT License** - see the [LICENSE.md](https://github.com/framinosona/Plugin.ByteArrays/blob/main/LICENSE.md) file for details.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests on [GitHub](https://github.com/framinosona/Plugin.ByteArray).
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests on [GitHub](https://github.com/framinosona/Plugin.ByteArrays).
 
 ---
 

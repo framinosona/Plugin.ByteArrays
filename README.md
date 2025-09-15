@@ -1,12 +1,12 @@
-# 🗂️ Plugin.ByteArray
+# 🗂️ Plugin.ByteArrays
 
-[![CI](https://github.com/framinosona/Plugin.ByteArray/actions/workflows/ci.yml/badge.svg)](https://github.com/framinosona/Plugin.ByteArray/actions/workflows/ci.yml)
+[![CI](https://github.com/framinosona/Plugin.ByteArrays/actions/workflows/ci.yml/badge.svg)](https://github.com/framinosona/Plugin.ByteArrays/actions/workflows/ci.yml)
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![NuGet](https://img.shields.io/nuget/v/Plugin.ByteArrays?logo=nuget&color=004880)](https://www.nuget.org/packages/Plugin.ByteArrays)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Plugin.ByteArrays?logo=nuget&color=004880)](https://www.nuget.org/packages/Plugin.ByteArrays)
-[![GitHub Release](https://img.shields.io/github/v/release/framinosona/Plugin.ByteArray?logo=github)](https://github.com/framinosona/Plugin.ByteArray/releases)
-[![License](https://img.shields.io/github/license/framinosona/Plugin.ByteArray?color=blue)](LICENSE.md)
-[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://framinosona.github.io/Plugin.ByteArray/)
+[![GitHub Release](https://img.shields.io/github/v/release/framinosona/Plugin.ByteArrays?logo=github)](https://github.com/framinosona/Plugin.ByteArrays/releases)
+[![License](https://img.shields.io/github/license/framinosona/Plugin.ByteArrays?color=blue)](LICENSE.md)
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue?logo=github)](https://framinosona.github.io/Plugin.ByteArrays/)
 
 A comprehensive set of utilities for working with byte arrays in .NET applications. These helpers are designed for performance, safety, and ease of use across all supported platforms.
 
