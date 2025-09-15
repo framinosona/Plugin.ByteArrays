@@ -79,7 +79,7 @@ jobs:
         run: >
           dotnet build Plugin.ByteArrays.slnx
           -c Release
-          -no-restore
+          --no-restore
           -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
