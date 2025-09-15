@@ -83,6 +83,7 @@ Search and compare byte arrays:
 | Section | Description |
 |---------|-------------|
 | [API Reference](/api/Plugin.ByteArrays.html) | Complete API documentation |
+| [Test Coverage](/coverage.md) | Code coverage report |
 
 ---
 
