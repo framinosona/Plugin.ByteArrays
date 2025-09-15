@@ -10,9 +10,8 @@ permissions:
   contents: write  # Needed to create tags and releases
   packages: write  # Needed if publishing packages
   actions: read    # Needed to read workflow artifacts
-  issues: read
-  checks: write
-  pull-requests: write
+  id-token: write  # Needed to authenticate with GitHub CLI
+  pages: write     # Needed to deploy to GitHub Pages
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
