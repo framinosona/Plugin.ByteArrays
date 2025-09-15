@@ -23,19 +23,20 @@ env:
   VERSION_MINOR: '0'
 
 jobs:
-  build:
+  calculate-version:
+    name: '🔍 Calculate Version'
     runs-on: ubuntu-latest
+    outputs:
+      FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
+      MAJOR: ${{ steps.version.outputs.MAJOR }}
+      MINOR: ${{ steps.version.outputs.MINOR }}
+      PATCH: ${{ steps.version.outputs.PATCH }}
     steps:
       - name: '🔄 Checkout'
         uses: actions/checkout@v5
         with:
           fetch-tags: true # https://github.com/actions/checkout/issues/1471#issuecomment-1771231294
           fetch-depth: 0
-
-      - name: '🔧 Setup .NET'
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '9.0.x'
 
       # ============================ VERSION ============================
       - name: '🔍 Calculate version'
@@ -76,17 +77,35 @@ jobs:
           # Also set as environment variables for subsequent steps
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
 
+  build:
+    name: '🛠️ Build, Test, Package'
+    runs-on: ubuntu-latest
+    needs: calculate-version
+    steps:
+      - name: '🔄 Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-tags: true # https://github.com/actions/checkout/issues/1471#issuecomment-1771231294
+          fetch-depth: 0
+
+      - name: '🔧 Setup .NET'
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '9.0.x'
+
       # ============================ BUILD ============================
       - name: '🔄 Restore'
+        shell: bash
         run: dotnet restore ${{ github.workspace }}/Plugin.ByteArrays.slnx
 
       - name: '🔨 Build'
+        shell: bash
         run: >
           dotnet build ${{ github.workspace }}/Plugin.ByteArrays.slnx
           -c Release
           --no-restore
-          -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
-          -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
+          -p:Version_Full=${{ needs.calculate-version.outputs.FULL_VERSION }}
+          -p:Version_Assembly=${{ needs.calculate-version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
           -p:PackageOutputPath=${{ github.workspace }}/Plugin.ByteArrays.Packages
 
@@ -150,48 +169,8 @@ jobs:
           path: ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
           name: github-pages
 
-      # ============================ TAGGING ============================
-      - name: '🏷️ Create tag'
-        shell: bash
-        if: github.ref == 'refs/heads/main'
-        run: |
-            echo "🏷️  Creating tag v${{ steps.version.outputs.FULL_VERSION }}"
-
-            git config --local user.email "${{ github.actor }}@users.noreply.github.com"
-            git config --local user.name "${{ github.actor }}"
-
-            if [ $(git tag -l "v${{ steps.version.outputs.FULL_VERSION }}") ]; then
-                echo "⚠️  Tag v${{ steps.version.outputs.FULL_VERSION }} already exists"
-                exit 1
-            else
-                echo "✅ Creating new tag v${{ steps.version.outputs.FULL_VERSION }}"
-                git tag -a "v${{ steps.version.outputs.FULL_VERSION }}" -m "Release v${{ steps.version.outputs.FULL_VERSION }}"
-                git push origin "v${{ steps.version.outputs.FULL_VERSION }}"
-                echo "🚀 Tag v${{ steps.version.outputs.FULL_VERSION }} created and pushed"
-            fi
-
-      - name: '📀 Create Release'
-        shell: bash
-        if: github.ref == 'refs/heads/main'
-        run: |
-            echo "📀 Creating GitHub release for v${{ steps.version.outputs.FULL_VERSION }}"
-
-            gh auth login --with-token <<< "${{ github.token }}"
-
-            # Check if release already exists
-            if gh release view "v${{ steps.version.outputs.FULL_VERSION }}" --repo ${{ github.repository }} >/dev/null 2>&1; then
-                echo "⚠️  Release v${{ steps.version.outputs.FULL_VERSION }} already exists"
-            else
-                echo "✅ Creating new release v${{ steps.version.outputs.FULL_VERSION }}"
-                gh release create "v${{ steps.version.outputs.FULL_VERSION }}" \
-                --title "Release v${{ steps.version.outputs.FULL_VERSION }}" \
-                --generate-notes \
-                --target "${{ github.sha }}" \
-                --repo ${{ github.repository }}
-                echo "🚀 Release v${{ steps.version.outputs.FULL_VERSION }} created successfully"
-            fi
-
-  deploy:
+  deploy-gh-pages:
+    name: '🚀 Deploy to GitHub Pages'
     if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
@@ -202,3 +181,74 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  publish-nuget-org:
+    name: '🚀 Publish to NuGet.org'
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: nuget-org
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: '📦 Download NuGet packages'
+        uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: ${{ github.workspace }}/packages
+
+      - name: '📦 Push Packages to NuGet.org'
+        shell: bash
+        run: dotnet push ${{ github.workspace }}/packages/*.nupkg --api-key ${{ secrets.NUGET_ORG_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+  tag-and-release:
+    name: '🏷️ Tag & Release'
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [calculate-version, publish-nuget-org, deploy-gh-pages]
+    steps:
+      - name: '🔄 Checkout'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      # ============================ TAGGING ============================
+      - name: '🏷️ Create tag'
+        shell: bash
+        if: github.ref == 'refs/heads/main'
+        run: |
+            echo "🏷️  Creating tag v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+
+            git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+            git config --local user.name "${{ github.actor }}"
+
+            if [ $(git tag -l "v${{ needs.calculate-version.outputs.FULL_VERSION }}") ]; then
+                echo "⚠️  Tag v${{ needs.calculate-version.outputs.FULL_VERSION }} already exists"
+                exit 1
+            else
+                echo "✅ Creating new tag v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+                git tag -a "v${{ needs.calculate-version.outputs.FULL_VERSION }}" -m "Release v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+                git push origin "v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+                echo "🚀 Tag v${{ needs.calculate-version.outputs.FULL_VERSION }} created and pushed"
+            fi
+
+      - name: '📀 Create Release'
+        shell: bash
+        if: github.ref == 'refs/heads/main'
+        run: |
+            echo "📀 Creating GitHub release for v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+
+            gh auth login --with-token <<< "${{ github.token }}"
+
+            # Check if release already exists
+            if gh release view "v${{ needs.calculate-version.outputs.FULL_VERSION }}" --repo ${{ github.repository }} >/dev/null 2>&1; then
+                echo "⚠️  Release v${{ needs.calculate-version.outputs.FULL_VERSION }} already exists"
+            else
+                echo "✅ Creating new release v${{ needs.calculate-version.outputs.FULL_VERSION }}"
+                gh release create "v${{ needs.calculate-version.outputs.FULL_VERSION }}" \
+                --title "Release v${{ needs.calculate-version.outputs.FULL_VERSION }}" \
+                --generate-notes \
+                --target "${{ github.sha }}" \
+                --repo ${{ github.repository }}
+                echo "🚀 Release v${{ needs.calculate-version.outputs.FULL_VERSION }} created successfully"
+            fi
