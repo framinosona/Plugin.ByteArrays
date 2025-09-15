@@ -16,6 +16,10 @@ permissions:
   pull-requests: write  # Needed to post comments on PRs (EnricoMi/publish-unit-test-result-action requires this)
   issues: read          # Needed to read issues (EnricoMi/publish-unit-test-result-action requires this)
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: bash
