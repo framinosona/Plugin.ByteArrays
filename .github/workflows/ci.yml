@@ -122,11 +122,22 @@ jobs:
           files: |
             ${{ github.workspace }}/output/tests/test-results.trx
 
-      - name: '📚 Generate Markdown'
-        uses: alan-null/cobertura-to-markdown@v1
+      - name: Code Coverage Report
+        uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          coverage_file: "${{ github.workspace }}/output/tests/coverage.cobertura.xml"
-          output_file: "${{ github.workspace }}/Plugin.ByteArrays.Docs/coverage.md"
+          filename: ${{ github.workspace }}/output/tests/coverage.cobertura.xml
+          badge: true
+          fail_below_min: true
+          format: markdown
+          indicators: true
+          output: both
+          thresholds: '60 80'
+
+      - name: '📦 Upload DEBUG artifacts'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DEBUG
+          path: ${{ github.workspace }}
 
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
