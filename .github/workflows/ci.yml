@@ -120,7 +120,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: |
-            ${{ github.workspace }}/output/tests/*
+            ${{ github.workspace }}/output/tests/test-results.trx
 
       - name: '📦 Move Coverage Report'
         shell: bash
