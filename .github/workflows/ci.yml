@@ -110,13 +110,13 @@ jobs:
         with:
           name: tests
           path: |
-            ${{ github.workspace }}/output/tests/tests.cobertura.xml
+            ${{ github.workspace }}/output/tests/coverage.cobertura.xml
             ${{ github.workspace }}/output/tests/test-results.trx
 
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: ${{ github.workspace }}/output/tests/tests.cobertura.xml
+          filename: ${{ github.workspace }}/output/tests/coverage.cobertura.xml
           format: markdown
           badge: true
           fail_below_min: true
