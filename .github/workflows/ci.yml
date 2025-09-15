@@ -78,34 +78,34 @@ jobs:
 
       # ============================ BUILD ============================
       - name: '🔄 Restore'
-        run: dotnet restore Plugin.ByteArrays.slnx
+        run: dotnet restore ${{ github.workspace }}/Plugin.ByteArrays.slnx
 
       - name: '🔨 Build'
         run: >
-          dotnet build Plugin.ByteArrays.slnx
+          dotnet build ${{ github.workspace }}/Plugin.ByteArrays.slnx
           -c Release
           --no-restore
           -p:Version_Full=${{ steps.version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ steps.version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
-          -p:PackageOutputPath=${{ github.workspace }}/output/packages
+          -p:PackageOutputPath=${{ github.workspace }}/Plugin.ByteArrays.Packages
 
       - name: '📦 Upload NuGet packages'
         uses: actions/upload-artifact@v4
         with:
           name: packages
-          path: ${{ github.workspace }}/output/packages
+          path: ${{ github.workspace }}/Plugin.ByteArrays.Packages
           if-no-files-found: error
 
       # ============================ TESTS & COVERAGE ============================
       - name: '🧪 Test with coverage (95% min)'
         shell: bash
         run: >
-          dotnet test Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
+          dotnet test ${{ github.workspace }}/Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
           -c Release
           --no-build
           --logger "trx;LogFileName=test-results.trx"
-          -p:TestOutputPath="${{ github.workspace }}/output/tests"
+          -p:TestOutputPath="${{ github.workspace }}/Plugin.ByteArrays.Tests/Results"
           -p:CollectCoverage=true
           -p:CoverletOutputFormat=cobertura
           '-p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"'
@@ -115,14 +115,14 @@ jobs:
         with:
           name: tests
           path: |
-            ${{ github.workspace }}/output/tests/coverage.cobertura.xml
-            ${{ github.workspace }}/output/tests/test-results.trx
+            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/coverage.cobertura.xml
+            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/test-results.trx
 
       - name: '📊 Publish Test Results'
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: |
-            ${{ github.workspace }}/output/tests/test-results.trx
+            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/test-results.trx
 
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
@@ -140,14 +140,14 @@ jobs:
         shell: bash
         run: |
           echo "📚 Generating documentation..."
-          dotnet docfx metadata Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/output/docs/api
-          dotnet docfx build Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/output/docs/site
+          dotnet docfx metadata ${{ github.workspace }}/Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/Plugin.ByteArrays.Docs/api
+          dotnet docfx build ${{ github.workspace }}/Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
 
       - name: "📦 Upload GitHub Pages artifact"
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ github.workspace }}/output/docs/site
+          path: ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
           name: github-pages
 
       # ============================ TAGGING ============================
