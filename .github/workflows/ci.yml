@@ -7,11 +7,14 @@ on:
     branches: [ main, master ]
 
 permissions:
-  contents: write  # Needed to create tags and releases
-  packages: write  # Needed if publishing packages
-  actions: read    # Needed to read workflow artifacts
-  id-token: write  # Needed to authenticate with GitHub CLI
-  pages: write     # Needed to deploy to GitHub Pages
+  contents: write       # Needed to create tags and releases
+  packages: write       # Needed if publishing packages
+  actions: read         # Needed to read workflow artifacts
+  checks: write         # Needed to create check runs for code coverage (EnricoMi/publish-unit-test-result-action requires this)
+  id-token: write       # Needed to authenticate with GitHub CLI
+  pages: write          # Needed to deploy to GitHub Pages
+  pull-requests: write  # Needed to post comments on PRs (EnricoMi/publish-unit-test-result-action requires this)
+  issues: read          # Needed to read issues (EnricoMi/publish-unit-test-result-action requires this)
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
@@ -115,7 +118,7 @@ jobs:
             ${{ github.workspace }}/output/tests/coverage.cobertura.xml
             ${{ github.workspace }}/output/tests/test-results.trx
 
-      - name: Publish Test Results
+      - name: '📊 Publish Test Results'
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: |
