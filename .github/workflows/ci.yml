@@ -218,7 +218,6 @@ jobs:
 
       # ============================ TAGGING ============================
       - name: '🏷️ Create tag'
-        if: github.ref == 'refs/heads/main'
         run: |
             echo "🏷️  Creating tag v${{ needs.calculate-version.outputs.FULL_VERSION }}"
 
@@ -236,7 +235,6 @@ jobs:
             fi
 
       - name: '📀 Create Release'
-        if: github.ref == 'refs/heads/main'
         run: |
             echo "📀 Creating GitHub release for v${{ needs.calculate-version.outputs.FULL_VERSION }}"
 
