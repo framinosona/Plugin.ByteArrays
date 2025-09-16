@@ -28,6 +28,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A new byte array with trailing bytes removed.</returns>
     public static byte[] TrimEndNonDestructive(this byte[] array, byte byteValueToTrim = 0)
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (array.Length == 0)
         {
             return array;
@@ -59,6 +60,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A new byte array containing the sliced data, or empty array if parameters are invalid.</returns>
     public static byte[] SafeSlice(this byte[] array, int start, int length)
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (start < 0 || length <= 0 || start >= array.Length)
         {
             return [];
@@ -77,6 +79,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A new byte array containing all input arrays concatenated.</returns>
     public static byte[] Concatenate(params byte[][] arrays)
     {
+        ArgumentNullException.ThrowIfNull(arrays);
         if (arrays.Length == 0)
         {
             return [];
@@ -113,6 +116,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A new byte array with elements in reverse order.</returns>
     public static byte[] Reverse(this byte[] array)
     {
+        ArgumentNullException.ThrowIfNull(array);
         var result = new byte[array.Length];
         for (var i = 0; i < array.Length; i++)
         {

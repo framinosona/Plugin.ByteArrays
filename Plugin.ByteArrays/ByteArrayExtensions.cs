@@ -118,6 +118,9 @@ public static partial class ByteArrayExtensions
     /// <returns>True if the array starts with the pattern, false otherwise.</returns>
     public static bool StartsWith(this byte[] array, byte[] pattern)
     {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(pattern);
+
         if (pattern.Length == 0)
         {
             return true;
@@ -139,6 +142,9 @@ public static partial class ByteArrayExtensions
     /// <returns>True if the array ends with the specified pattern; otherwise, false.</returns>
     public static bool EndsWith(this byte[] array, byte[] pattern)
     {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(pattern);
+
         if (pattern.Length == 0)
         {
             return true;
@@ -161,6 +167,8 @@ public static partial class ByteArrayExtensions
     /// <returns>The index of the first occurrence, or -1 if not found.</returns>
     public static int IndexOf(this byte[] array, byte[] pattern)
     {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(pattern);
         if (pattern.Length == 0)
         {
             return 0;

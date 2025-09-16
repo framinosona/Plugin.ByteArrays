@@ -3,6 +3,7 @@ run-name: >-
   ${{ github.event_name == 'pull_request' &&
       format('🏗 {0} - {1} → {2} by {3}', github.event_name, github.head_ref, github.base_ref, github.actor) ||
       format('🏗 {0} - {1} - {2} by {3}', github.event_name, github.ref_name, github.sha, github.actor) }}
+
 on:
   push:
     branches: [ main, master ]

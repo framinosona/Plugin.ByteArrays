@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 
 namespace Plugin.ByteArrays;
 
@@ -19,6 +19,7 @@ public static partial class ByteArrayExtensions
     /// <returns>Converted value.</returns>
     public static string ToUtf8String(this byte[] array, ref int position, int numberOfBytesToRead = -1)
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (numberOfBytesToRead == -1)
         {
             numberOfBytesToRead = array.Length - position;
@@ -53,6 +54,7 @@ public static partial class ByteArrayExtensions
     /// <returns>Converted value.</returns>
     public static string ToUtf8StringOrDefault(this byte[] array, ref int position, int numberOfBytesToRead = -1, string defaultValue = "")
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (numberOfBytesToRead == -1)
         {
             numberOfBytesToRead = array.Length - position;
@@ -84,6 +86,7 @@ public static partial class ByteArrayExtensions
     /// <returns>Converted value.</returns>
     public static string ToAsciiString(this byte[] array, ref int position, int numberOfBytesToRead = -1)
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (numberOfBytesToRead == -1)
         {
             numberOfBytesToRead = array.Length - position;
@@ -118,6 +121,7 @@ public static partial class ByteArrayExtensions
     /// <returns>Converted value.</returns>
     public static string ToAsciiStringOrDefault(this byte[] array, ref int position, int numberOfBytesToRead = -1, string defaultValue = "")
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (numberOfBytesToRead == -1)
         {
             numberOfBytesToRead = array.Length - position;
@@ -153,6 +157,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A hex string representation of the byte array.</returns>
     public static string ToHexString(this byte[] array, string separator = "", string prefix = "", bool upperCase = true)
     {
+        ArgumentNullException.ThrowIfNull(array);
         if (array.Length == 0)
         {
             return string.Empty;
@@ -208,6 +213,7 @@ public static partial class ByteArrayExtensions
     /// <returns>A Base64 string representation.</returns>
     public static string ToBase64String(this byte[] array)
     {
+        ArgumentNullException.ThrowIfNull(array);
         return array.Length == 0 ? string.Empty : Convert.ToBase64String(array);
     }
 
