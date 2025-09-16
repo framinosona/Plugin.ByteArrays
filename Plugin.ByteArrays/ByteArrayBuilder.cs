@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 
 namespace Plugin.ByteArrays;
 
@@ -223,14 +224,14 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
         var underlyingType = Enum.GetUnderlyingType(enumType);
         var bytes = underlyingType switch
         {
-            not null when underlyingType == typeof(byte) => [Convert.ToByte(enumValue)],
-            not null when underlyingType == typeof(sbyte) => [unchecked((byte)Convert.ToSByte(enumValue))],
-            not null when underlyingType == typeof(short) => BitConverter.GetBytes(Convert.ToInt16(enumValue)),
-            not null when underlyingType == typeof(ushort) => BitConverter.GetBytes(Convert.ToUInt16(enumValue)),
-            not null when underlyingType == typeof(int) => BitConverter.GetBytes(Convert.ToInt32(enumValue)),
-            not null when underlyingType == typeof(uint) => BitConverter.GetBytes(Convert.ToUInt32(enumValue)),
-            not null when underlyingType == typeof(long) => BitConverter.GetBytes(Convert.ToInt64(enumValue)),
-            not null when underlyingType == typeof(ulong) => BitConverter.GetBytes(Convert.ToUInt64(enumValue)),
+            not null when underlyingType == typeof(byte) => [Convert.ToByte(enumValue, CultureInfo.InvariantCulture)],
+            not null when underlyingType == typeof(sbyte) => [unchecked((byte)Convert.ToSByte(enumValue, CultureInfo.InvariantCulture))],
+            not null when underlyingType == typeof(short) => BitConverter.GetBytes(Convert.ToInt16(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(ushort) => BitConverter.GetBytes(Convert.ToUInt16(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(int) => BitConverter.GetBytes(Convert.ToInt32(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(uint) => BitConverter.GetBytes(Convert.ToUInt32(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(long) => BitConverter.GetBytes(Convert.ToInt64(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(ulong) => BitConverter.GetBytes(Convert.ToUInt64(enumValue, CultureInfo.InvariantCulture)),
             var _ => throw new ArgumentException("Unsupported enum underlying type"),
         };
         return Append(bytes);
@@ -241,14 +242,14 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
         var underlyingType = Enum.GetUnderlyingType(typeof(T));
         var bytes = underlyingType switch
         {
-            not null when underlyingType == typeof(byte) => [Convert.ToByte(enumValue)],
-            not null when underlyingType == typeof(sbyte) => [unchecked((byte)Convert.ToSByte(enumValue))],
-            not null when underlyingType == typeof(short) => BitConverter.GetBytes(Convert.ToInt16(enumValue)),
-            not null when underlyingType == typeof(ushort) => BitConverter.GetBytes(Convert.ToUInt16(enumValue)),
-            not null when underlyingType == typeof(int) => BitConverter.GetBytes(Convert.ToInt32(enumValue)),
-            not null when underlyingType == typeof(uint) => BitConverter.GetBytes(Convert.ToUInt32(enumValue)),
-            not null when underlyingType == typeof(long) => BitConverter.GetBytes(Convert.ToInt64(enumValue)),
-            not null when underlyingType == typeof(ulong) => BitConverter.GetBytes(Convert.ToUInt64(enumValue)),
+            not null when underlyingType == typeof(byte) => [Convert.ToByte(enumValue, CultureInfo.InvariantCulture)],
+            not null when underlyingType == typeof(sbyte) => [unchecked((byte)Convert.ToSByte(enumValue, CultureInfo.InvariantCulture))],
+            not null when underlyingType == typeof(short) => BitConverter.GetBytes(Convert.ToInt16(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(ushort) => BitConverter.GetBytes(Convert.ToUInt16(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(int) => BitConverter.GetBytes(Convert.ToInt32(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(uint) => BitConverter.GetBytes(Convert.ToUInt32(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(long) => BitConverter.GetBytes(Convert.ToInt64(enumValue, CultureInfo.InvariantCulture)),
+            not null when underlyingType == typeof(ulong) => BitConverter.GetBytes(Convert.ToUInt64(enumValue, CultureInfo.InvariantCulture)),
             var _ => throw new ArgumentException("Unsupported enum underlying type"),
         };
         return Append(bytes);

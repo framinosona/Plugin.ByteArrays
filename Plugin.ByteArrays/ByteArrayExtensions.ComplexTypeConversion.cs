@@ -103,7 +103,7 @@ public static partial class ByteArrayExtensions
         if (typeof(T).IsDefined(typeof(FlagsAttribute), false))
         {
             // For [Flags] enums, ensure all bits in enumArrayValue are valid
-            var allDefinedBits = Convert.ToUInt64(Enum.GetValues(typeof(T)).Cast<object>().Aggregate(0UL, (acc, v) => acc | Convert.ToUInt64(v)));
+            var allDefinedBits = Convert.ToUInt64(Enum.GetValues(typeof(T)).Cast<object>().Aggregate(0UL, (acc, v) => acc | Convert.ToUInt64(v, System.Globalization.CultureInfo.InvariantCulture)));
             if ((enumArrayValue & ~allDefinedBits) != 0)
             {
                 throw new ArgumentException($"Value {enumArrayValue} contains bits not defined in [Flags] enum {typeof(T).Name}. Valid bits: 0x{allDefinedBits:X}");

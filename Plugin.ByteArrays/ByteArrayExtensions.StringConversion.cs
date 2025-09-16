@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace Plugin.ByteArrays;
 
@@ -159,7 +159,7 @@ public static partial class ByteArrayExtensions
         }
 
         var format = upperCase ? "X2" : "x2";
-        var hexStrings = array.Select(b => prefix + b.ToString(format));
+        var hexStrings = array.Select(b => prefix + b.ToString(format, System.Globalization.CultureInfo.InvariantCulture));
         return string.Join(separator, hexStrings);
     }
 
@@ -177,8 +177,11 @@ public static partial class ByteArrayExtensions
         }
 
         // Remove common separators and prefixes
-        hexString = hexString.Replace(" ", "").Replace("-", "").Replace(":", "")
-                            .Replace("0x", "").Replace("0X", "");
+        hexString = hexString.Replace(" ", "", StringComparison.Ordinal)
+                             .Replace("-", "", StringComparison.Ordinal)
+                             .Replace(":", "", StringComparison.Ordinal)
+                             .Replace("0x", "", StringComparison.OrdinalIgnoreCase)
+                             .Replace("0X", "", StringComparison.OrdinalIgnoreCase);
 
         if (hexString.Length % 2 != 0)
         {
