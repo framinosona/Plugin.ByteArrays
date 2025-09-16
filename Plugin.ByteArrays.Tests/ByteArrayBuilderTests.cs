@@ -22,7 +22,7 @@ public class ByteArrayBuilderTests
         using var b = new ByteArrayBuilder();
         b.Append(new byte[5]);
         Action act = () => b.ToByteArray(maxSize: 4);
-        act.Should().Throw<IndexOutOfRangeException>();
+        act.Should().Throw<InvalidOperationException>();
         b.ToByteArray(maxSize: 5).Should().HaveCount(5);
     }
 

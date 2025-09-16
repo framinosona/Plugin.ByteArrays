@@ -95,6 +95,7 @@ public static partial class ByteArrayExtensions
         Action<byte[], int, int, Exception>? errorHandler = null
     )
     {
+#pragma warning disable CA1031 // Do not catch general exception types
         try
         {
             return ExecuteConversionToType(array, ref position, size, bitConverterFunction);
@@ -104,6 +105,7 @@ public static partial class ByteArrayExtensions
             errorHandler?.Invoke(array, position, size, ex);
             return defaultValue;
         }
+#pragma warning restore CA1031 // Do not catch general exception types
     }
 
     #endregion

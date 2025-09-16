@@ -76,18 +76,19 @@ public static partial class ByteArrayExtensions
     /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
     /// <typeparam name="T">Type of Enum.</typeparam>
     /// <returns>Converted value.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if the array is null.</exception>
     public static T ToEnum<T>(this byte[] array, ref int position) where T : Enum
     {
         ArgumentNullException.ThrowIfNull(array);
         if (position < 0)
         {
-            throw new IndexOutOfRangeException("Position must be greater than or equal to  0.");
+            throw new ArgumentException($"Position must be greater than or equal to 0. Was {position}", nameof(position));
         }
         var outputType = typeof(T).IsEnum ? Enum.GetUnderlyingType(typeof(T)) : typeof(T);
         var size = Marshal.SizeOf(outputType);
         if (array.Length < position + size)
         {
-            throw new IndexOutOfRangeException($"Array {array.ToDebugString()} is too small. Reading {size} bytes ({typeof(T).Name}) from position {position} is not possible in array of {array.Length}");
+            throw new ArgumentException($"Array {array.ToDebugString()} is too small. Reading {size} bytes ({typeof(T).Name}) from position {position} is not possible in array of {array.Length}", nameof(position));
         }
 
         ulong enumArrayValue = size switch

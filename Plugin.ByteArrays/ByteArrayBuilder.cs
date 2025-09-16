@@ -21,7 +21,7 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
     /// <returns>A task that represents the asynchronous dispose operation.</returns>
     public async ValueTask DisposeAsync()
     {
-        await _memoryStream.DisposeAsync();
+        await _memoryStream.DisposeAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -43,13 +43,13 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="maxSize">The maximum allowed size of the byte array. If exceeded, an exception is thrown.</param>
     /// <returns>The constructed byte array.</returns>
-    /// <exception cref="IndexOutOfRangeException">Thrown if the byte array is longer than <paramref name="maxSize"/>.</exception>
+    /// <exception cref="InvalidOperationException">Thrown if the resulting array exceeds the specified maxSize.</exception>
     public byte[] ToByteArray(int? maxSize = null)
     {
         var output = _memoryStream.ToArray();
         if (maxSize.HasValue && output.Length > maxSize.Value)
         {
-            throw new IndexOutOfRangeException($"Array [{this}] is too big. {output.Length} bytes > {maxSize.Value} bytes");
+            throw new InvalidOperationException($"Array [{this}] is too big. {output.Length} bytes > {maxSize.Value} bytes");
         }
 
         return output;
