@@ -6,8 +6,12 @@ run-name: >-
 on:
   push:
     branches: [ main, master ]
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
     branches: [ main, master ]
+    paths-ignore:
+      - '.github/ISSUE_TEMPLATE/**'
 
 permissions:
   contents: write       # Needed to create tags and releases
