@@ -175,8 +175,8 @@ byte[] enumBytes = enumValue.ToByteArray();
 ## 🧪 Development
 
 - **Testing**: xUnit + FluentAssertions with comprehensive coverage
-- **Build**: `dotnet build -c Release`
-- **Test**: `dotnet test -c Release`
+- **Build**: `dotnet build`
+- **Test**: `dotnet test`
 - **Framework**: .NET 9.0
 
 ---
