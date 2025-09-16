@@ -247,7 +247,7 @@ jobs:
                 echo "✅ Creating new release v${{ needs.calculate-version.outputs.FULL_VERSION }}"
                 gh release create "v${{ needs.calculate-version.outputs.FULL_VERSION }}" \
                 --title "Release v${{ needs.calculate-version.outputs.FULL_VERSION }}" \
-                --notes-from-tag \
+                --generate-notes \
                 --target "${{ github.sha }}" \
                 --repo ${{ github.repository }}
                 echo "🚀 Release v${{ needs.calculate-version.outputs.FULL_VERSION }} created successfully"
