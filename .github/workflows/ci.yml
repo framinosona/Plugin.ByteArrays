@@ -32,6 +32,7 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
   VERSION_MAJOR: '1'
   VERSION_MINOR: '0'
+  PROJECT_NAME: ${{ env.PROJECT_NAME }}
 
 jobs:
   calculate-version:
@@ -105,50 +106,50 @@ jobs:
 
       # ============================ BUILD ============================
       - name: '🔄 Restore'
-        run: dotnet restore ${{ github.workspace }}/Plugin.ByteArrays.slnx
+        run: dotnet restore ${{ github.workspace }}/${{ env.PROJECT_NAME }}.slnx
 
       - name: '🔨 Build'
         run: >
-          dotnet build ${{ github.workspace }}/Plugin.ByteArrays.slnx
+          dotnet build ${{ github.workspace }}/${{ env.PROJECT_NAME }}.slnx
           -c Release
           --no-restore
           -p:Version_Full=${{ needs.calculate-version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ needs.calculate-version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
-          -p:PackageOutputPath=${{ github.workspace }}/Plugin.ByteArrays.Packages
+          -p:PackageOutputPath=${{ github.workspace }}/${{ env.PROJECT_NAME }}.Packages
 
       - name: '📦 Upload NuGet packages'
         uses: actions/upload-artifact@v4
         with:
           name: packages
-          path: ${{ github.workspace }}/Plugin.ByteArrays.Packages
+          path: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Packages
           if-no-files-found: error
 
       # ============================ TESTS & COVERAGE ============================
       - name: '🧪 Test with coverage (95% min)'
         run: >
-          dotnet test ${{ github.workspace }}/Plugin.ByteArrays.Tests/Plugin.ByteArrays.Tests.csproj
+          dotnet test ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/${{ env.PROJECT_NAME }}.Tests.csproj
           -c Release
           --no-build
           --logger "trx;LogFileName=test-results.trx"
-          -p:TestOutputPath="${{ github.workspace }}/Plugin.ByteArrays.Tests/Results"
+          -p:TestOutputPath="${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results"
           -p:CollectCoverage=true
           -p:CoverletOutputFormat=cobertura
-          '-p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[Plugin.ByteArrays.Tests]*"'
+          '-p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[${{ env.PROJECT_NAME }}.Tests]*"'
 
       - name: '📦 Upload test artifacts'
         uses: actions/upload-artifact@v4
         with:
           name: tests
           path: |
-            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/coverage.cobertura.xml
-            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/test-results.trx
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/coverage.cobertura.xml
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/test-results.trx
 
       - name: '📊 Publish Test Results'
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: |
-            ${{ github.workspace }}/Plugin.ByteArrays.Tests/Results/test-results.trx
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/test-results.trx
 
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
@@ -164,14 +165,14 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           echo "📚 Generating documentation..."
-          dotnet docfx metadata ${{ github.workspace }}/Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/Plugin.ByteArrays.Docs/api
-          dotnet docfx build ${{ github.workspace }}/Plugin.ByteArrays.Docs/docfx.json --output ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
+          dotnet docfx metadata ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Docs/docfx.json --output ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Docs/api
+          dotnet docfx build ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Docs/docfx.json --output ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Docs/site
 
       - name: "📦 Upload GitHub Pages artifact"
         if: github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ${{ github.workspace }}/Plugin.ByteArrays.Docs/site
+          path: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Docs/site
           name: github-pages
 
   deploy-gh-pages:
