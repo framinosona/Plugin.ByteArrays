@@ -1,4 +1,6 @@
-﻿namespace Plugin.ByteArrays;
+﻿using System.Globalization;
+
+namespace Plugin.ByteArrays;
 
 /// <summary>
 ///     Functions converting other types into a byte array.
