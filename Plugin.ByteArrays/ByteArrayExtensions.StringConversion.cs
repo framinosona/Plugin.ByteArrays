@@ -230,4 +230,282 @@ public static partial class ByteArrayExtensions
 
     #endregion
 
+    #region Unicode String Conversions
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-16 String.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf16String(this byte[] array, ref int position, int numberOfBytesToRead = -1)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        if (numberOfBytesToRead == -1)
+        {
+            numberOfBytesToRead = array.Length - position;
+        }
+        if (numberOfBytesToRead == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToType(array, ref position, numberOfBytesToRead, (bytes, _) => Encoding.Unicode.GetString(bytes));
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-16 String.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf16String(this byte[] array, int position = 0, int numberOfBytesToRead = -1)
+    {
+        return ToUtf16String(array, ref position, numberOfBytesToRead);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-16 String.
+    ///     Returns the default value if conversion fails.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf16StringOrDefault(this byte[] array, ref int position, int numberOfBytesToRead = -1, string defaultValue = "")
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        if (numberOfBytesToRead == -1)
+        {
+            numberOfBytesToRead = array.Length - position;
+        }
+        if (numberOfBytesToRead == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToTypeOrDefault(array, ref position, numberOfBytesToRead,
+            (bytes, _) => Encoding.Unicode.GetString(bytes), defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-16 String.
+    ///     Returns the default value if conversion fails.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf16StringOrDefault(this byte[] array, int position = 0, int numberOfBytesToRead = -1, string defaultValue = "")
+    {
+        return ToUtf16StringOrDefault(array, ref position, numberOfBytesToRead, defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-32 String.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf32String(this byte[] array, ref int position, int numberOfBytesToRead = -1)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        if (numberOfBytesToRead == -1)
+        {
+            numberOfBytesToRead = array.Length - position;
+        }
+        if (numberOfBytesToRead == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToType(array, ref position, numberOfBytesToRead, (bytes, _) => Encoding.UTF32.GetString(bytes));
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-32 String.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf32String(this byte[] array, int position = 0, int numberOfBytesToRead = -1)
+    {
+        return ToUtf32String(array, ref position, numberOfBytesToRead);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-32 String.
+    ///     Returns the default value if conversion fails.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf32StringOrDefault(this byte[] array, ref int position, int numberOfBytesToRead = -1, string defaultValue = "")
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        if (numberOfBytesToRead == -1)
+        {
+            numberOfBytesToRead = array.Length - position;
+        }
+        if (numberOfBytesToRead == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToTypeOrDefault(array, ref position, numberOfBytesToRead,
+            (bytes, _) => Encoding.UTF32.GetString(bytes), defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a UTF-32 String.
+    ///     Returns the default value if conversion fails.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static string ToUtf32StringOrDefault(this byte[] array, int position = 0, int numberOfBytesToRead = -1, string defaultValue = "")
+    {
+        return ToUtf32StringOrDefault(array, ref position, numberOfBytesToRead, defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a String using custom encoding.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToString(this byte[] array, ref int position, Encoding encoding, int numberOfBytesToRead = -1)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(encoding);
+
+        if (numberOfBytesToRead == -1)
+        {
+            numberOfBytesToRead = array.Length - position;
+        }
+        if (numberOfBytesToRead == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToType(array, ref position, numberOfBytesToRead, (bytes, _) => encoding.GetString(bytes));
+    }
+
+    /// <summary>
+    ///     Converts parts of a byte array into a String using custom encoding.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <param name="numberOfBytesToRead">Number of bytes of the expected string</param>
+    /// <returns>Converted value.</returns>
+    public static string ToString(this byte[] array, int position, Encoding encoding, int numberOfBytesToRead = -1)
+    {
+        return ToString(array, ref position, encoding, numberOfBytesToRead);
+    }
+
+    #endregion
+
+    #region Length-Prefixed and Null-Terminated Strings
+
+    /// <summary>
+    ///     Converts a length-prefixed string from the byte array.
+    ///     Format: 2-byte length + string data.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <returns>Converted string value.</returns>
+    public static string ToLengthPrefixedString(this byte[] array, ref int position, Encoding encoding)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(encoding);
+
+        var length = ExecuteConversionToType(array, ref position, sizeof(short), BitConverter.ToInt16);
+        if (length == 0)
+        {
+            return string.Empty;
+        }
+
+        return ExecuteConversionToType(array, ref position, length, (bytes, _) => encoding.GetString(bytes));
+    }
+
+    /// <summary>
+    ///     Converts a length-prefixed string from the byte array.
+    ///     Format: 2-byte length + string data.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <returns>Converted string value.</returns>
+    public static string ToLengthPrefixedString(this byte[] array, int position, Encoding encoding)
+    {
+        return ToLengthPrefixedString(array, ref position, encoding);
+    }
+
+    /// <summary>
+    ///     Converts a null-terminated string from the byte array.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <returns>Converted string value.</returns>
+    public static string ToNullTerminatedString(this byte[] array, ref int position, Encoding encoding)
+    {
+        ArgumentNullException.ThrowIfNull(array);
+        ArgumentNullException.ThrowIfNull(encoding);
+
+        var startPosition = position;
+
+        // Find the null terminator
+        while (position < array.Length && array[position] != 0)
+        {
+            position++;
+        }
+
+        var length = position - startPosition;
+        if (length == 0)
+        {
+            if (position < array.Length && array[position] == 0)
+            {
+                position++; // Skip the null terminator
+            }
+            return string.Empty;
+        }
+
+        var stringBytes = array.Skip(startPosition).Take(length).ToArray();
+        if (position < array.Length && array[position] == 0)
+        {
+            position++; // Skip the null terminator
+        }
+
+        return encoding.GetString(stringBytes);
+    }
+
+    /// <summary>
+    ///     Converts a null-terminated string from the byte array.
+    /// </summary>
+    /// <param name="array">The byte array. Cannot be null.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="encoding">The encoding to use for conversion.</param>
+    /// <returns>Converted string value.</returns>
+    public static string ToNullTerminatedString(this byte[] array, int position, Encoding encoding)
+    {
+        return ToNullTerminatedString(array, ref position, encoding);
+    }
+
+    #endregion
+
 }

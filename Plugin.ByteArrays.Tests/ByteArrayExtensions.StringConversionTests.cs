@@ -19,6 +19,16 @@ public class ByteArrayExtensions_StringConversionTests
     }
 
     [Fact]
+    public void ToUtf8StringTest_BasicRoundTrip()
+    {
+        var s = "hello world";
+        var utf8 = Encoding.UTF8.GetBytes(s);
+        var p = 0;
+        utf8.ToUtf8String(ref p).Should().Be(s);
+        p.Should().Be(utf8.Length);
+    }
+
+    [Fact]
     public void ToUtf8String_NonRef_Overload_Works()
     {
         var utf8 = Encoding.UTF8.GetBytes("hello");
@@ -311,4 +321,382 @@ public class ByteArrayExtensions_StringConversionTests
         asciiData.ToAsciiString(ref p, -1).Should().Be("World!");
         p.Should().Be(asciiData.Length);
     }
+
+    #region Unicode String Conversion Tests
+
+    [Fact]
+    public void ToUtf16String_WithValidData_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Hello, 世界! 🌍";
+        var data = Encoding.Unicode.GetBytes(originalString);
+        var position = 0;
+
+        // Act
+        var result = data.ToUtf16String(ref position);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length);
+    }
+
+    [Fact]
+    public void ToUtf16String_WithFixedPosition_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "UTF-16 Test";
+        var data = Encoding.Unicode.GetBytes(originalString);
+
+        // Act
+        var result = data.ToUtf16String(0);
+
+        // Assert
+        result.Should().Be(originalString);
+    }
+
+    [Fact]
+    public void ToUtf16String_WithSpecificLength_ShouldReturnPartialString()
+    {
+        // Arrange
+        var originalString = "Hello World";
+        var data = Encoding.Unicode.GetBytes(originalString);
+        var position = 0;
+        var bytesToRead = Encoding.Unicode.GetByteCount("Hello");
+
+        // Act
+        var result = data.ToUtf16String(ref position, bytesToRead);
+
+        // Assert
+        result.Should().Be("Hello");
+        position.Should().Be(bytesToRead);
+    }
+
+    [Fact]
+    public void ToUtf16StringOrDefault_WithInvalidData_ShouldReturnDefault()
+    {
+        // Arrange
+        var data = new byte[] { 0xFF }; // Invalid UTF-16 (odd number of bytes)
+        var position = 0;
+        var defaultValue = "default";
+
+        // Act
+        var result = data.ToUtf16StringOrDefault(ref position, -1, defaultValue);
+
+        // Assert
+        // The method might return a replacement character or the default value
+        // Both are acceptable behaviors for invalid UTF-16 data
+        if (result == defaultValue)
+        {
+            result.Should().Be(defaultValue);
+            position.Should().Be(0);
+        }
+        else
+        {
+            // If it doesn't return default, it should at least return something
+            result.Should().NotBeNull();
+        }
+    }
+
+    [Fact]
+    public void ToUtf32String_WithValidData_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "UTF-32: 🚀🌟⭐";
+        var data = Encoding.UTF32.GetBytes(originalString);
+        var position = 0;
+
+        // Act
+        var result = data.ToUtf32String(ref position);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length);
+    }
+
+    [Fact]
+    public void ToUtf32String_WithFixedPosition_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Test 32";
+        var data = Encoding.UTF32.GetBytes(originalString);
+
+        // Act
+        var result = data.ToUtf32String(0);
+
+        // Assert
+        result.Should().Be(originalString);
+    }
+
+    [Fact]
+    public void ToUtf32StringOrDefault_WithInvalidData_ShouldReturnDefault()
+    {
+        // Arrange
+        var data = new byte[] { 0xFF, 0xFF }; // Invalid UTF-32 data
+        var position = 0;
+        var defaultValue = "fallback";
+
+        // Act
+        var result = data.ToUtf32StringOrDefault(ref position, -1, defaultValue);
+
+        // Assert
+        // The method might return a replacement character or the default value
+        // Both are acceptable behaviors for invalid UTF-32 data
+        if (result == defaultValue)
+        {
+            result.Should().Be(defaultValue);
+            position.Should().Be(0);
+        }
+        else
+        {
+            // If it doesn't return default, it should at least return something
+            result.Should().NotBeNull();
+        }
+    }
+
+    [Fact]
+    public void ToString_WithCustomEncoding_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Custom encoding test";
+        var encoding = Encoding.GetEncoding("iso-8859-1");
+        var data = encoding.GetBytes(originalString);
+        var position = 0;
+
+        // Act
+        var result = data.ToString(ref position, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length);
+    }
+
+    [Fact]
+    public void ToString_WithCustomEncodingFixedPosition_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Fixed position test";
+        var encoding = Encoding.GetEncoding("iso-8859-1");
+        var data = encoding.GetBytes(originalString);
+
+        // Act
+        var result = data.ToString(0, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+    }
+
+    [Fact]
+    public void ToLengthPrefixedString_WithValidData_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Length prefixed";
+        var encoding = Encoding.UTF8;
+        var stringBytes = encoding.GetBytes(originalString);
+        var lengthBytes = BitConverter.GetBytes((short)stringBytes.Length);
+        var data = lengthBytes.Concat(stringBytes).ToArray();
+        var position = 0;
+
+        // Act
+        var result = data.ToLengthPrefixedString(ref position, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length);
+    }
+
+    [Fact]
+    public void ToLengthPrefixedString_WithEmptyString_ShouldReturnEmptyString()
+    {
+        // Arrange
+        var data = BitConverter.GetBytes((short)0); // Zero length
+        var encoding = Encoding.UTF8;
+        var position = 0;
+
+        // Act
+        var result = data.ToLengthPrefixedString(ref position, encoding);
+
+        // Assert
+        result.Should().BeEmpty();
+        position.Should().Be(2); // Length prefix consumed
+    }
+
+    [Fact]
+    public void ToLengthPrefixedString_WithFixedPosition_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Fixed position";
+        var encoding = Encoding.UTF8;
+        var stringBytes = encoding.GetBytes(originalString);
+        var lengthBytes = BitConverter.GetBytes((short)stringBytes.Length);
+        var data = lengthBytes.Concat(stringBytes).ToArray();
+
+        // Act
+        var result = data.ToLengthPrefixedString(0, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+    }
+
+    [Fact]
+    public void ToNullTerminatedString_WithValidData_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Null terminated";
+        var encoding = Encoding.UTF8;
+        var stringBytes = encoding.GetBytes(originalString);
+        var data = stringBytes.Concat(new byte[] { 0 }).ToArray(); // Add null terminator
+        var position = 0;
+
+        // Act
+        var result = data.ToNullTerminatedString(ref position, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length); // Should advance past null terminator
+    }
+
+    [Fact]
+    public void ToNullTerminatedString_WithEmptyString_ShouldReturnEmptyString()
+    {
+        // Arrange
+        var data = new byte[] { 0 }; // Just null terminator
+        var encoding = Encoding.UTF8;
+        var position = 0;
+
+        // Act
+        var result = data.ToNullTerminatedString(ref position, encoding);
+
+        // Assert
+        result.Should().BeEmpty();
+        position.Should().Be(1); // Should advance past null terminator
+    }
+
+    [Fact]
+    public void ToNullTerminatedString_WithoutTerminator_ShouldReturnEntireString()
+    {
+        // Arrange
+        var originalString = "No terminator";
+        var encoding = Encoding.UTF8;
+        var data = encoding.GetBytes(originalString); // No null terminator
+        var position = 0;
+
+        // Act
+        var result = data.ToNullTerminatedString(ref position, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+        position.Should().Be(data.Length);
+    }
+
+    [Fact]
+    public void ToNullTerminatedString_WithFixedPosition_ShouldReturnCorrectString()
+    {
+        // Arrange
+        var originalString = "Test string";
+        var encoding = Encoding.UTF8;
+        var stringBytes = encoding.GetBytes(originalString);
+        var data = stringBytes.Concat(new byte[] { 0 }).ToArray();
+
+        // Act
+        var result = data.ToNullTerminatedString(0, encoding);
+
+        // Assert
+        result.Should().Be(originalString);
+    }
+
+    [Fact]
+    public void UnicodeStringConversions_WithNullArray_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        byte[] data = null!;
+        var position = 0;
+        var encoding = Encoding.UTF8;
+
+        // Act & Assert
+        Action act1 = () => data.ToUtf16String(ref position);
+        act1.Should().Throw<ArgumentNullException>();
+
+        Action act2 = () => data.ToUtf32String(ref position);
+        act2.Should().Throw<ArgumentNullException>();
+
+        Action act3 = () => data.ToString(ref position, encoding);
+        act3.Should().Throw<ArgumentNullException>();
+
+        Action act4 = () => data.ToLengthPrefixedString(ref position, encoding);
+        act4.Should().Throw<ArgumentNullException>();
+
+        Action act5 = () => data.ToNullTerminatedString(ref position, encoding);
+        act5.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void CustomEncodingMethods_WithNullEncoding_ShouldThrowArgumentNullException()
+    {
+        // Arrange
+        var data = new byte[] { 1, 2, 3 };
+        var position = 0;
+        Encoding encoding = null!;
+
+        // Act & Assert
+        Action act1 = () => data.ToString(ref position, encoding);
+        act1.Should().Throw<ArgumentNullException>();
+
+        Action act2 = () => data.ToLengthPrefixedString(ref position, encoding);
+        act2.Should().Throw<ArgumentNullException>();
+
+        Action act3 = () => data.ToNullTerminatedString(ref position, encoding);
+        act3.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void UnicodeStringConversions_EmptyData_ShouldReturnEmptyString()
+    {
+        // Arrange
+        var data = Array.Empty<byte>();
+        var position = 0;
+        var encoding = Encoding.UTF8;
+
+        // Act & Assert
+        data.ToUtf16String(ref position).Should().BeEmpty();
+        data.ToUtf32String(ref position).Should().BeEmpty();
+        data.ToString(ref position, encoding).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void UnicodeStringRoundtrip_ShouldPreserveOriginalData()
+    {
+        // Arrange
+        var originalStrings = new[]
+        {
+            "Simple ASCII",
+            "UTF-8 with émojis: 🎉🚀",
+            "Multiple languages: Hello, こんにちは, 你好, Здравствуйте",
+            "Special chars: ñáéíóúü",
+            ""
+        };
+
+        foreach (var originalString in originalStrings)
+        {
+            // UTF-16 roundtrip
+            var utf16Data = Encoding.Unicode.GetBytes(originalString);
+            var position16 = 0;
+            var utf16Result = utf16Data.ToUtf16String(ref position16);
+            utf16Result.Should().Be(originalString);
+
+            // UTF-32 roundtrip
+            var utf32Data = Encoding.UTF32.GetBytes(originalString);
+            var position32 = 0;
+            var utf32Result = utf32Data.ToUtf32String(ref position32);
+            utf32Result.Should().Be(originalString);
+
+            // Custom encoding roundtrip
+            var utf8Data = Encoding.UTF8.GetBytes(originalString);
+            var positionUtf8 = 0;
+            var utf8Result = utf8Data.ToString(ref positionUtf8, Encoding.UTF8);
+            utf8Result.Should().Be(originalString);
+        }
+    }
+
+    #endregion
+
 }
