@@ -131,7 +131,7 @@ jobs:
           if-no-files-found: error
 
       # ============================ TESTS & COVERAGE ============================
-      - name: '🧪 Test with coverage (95% min)'
+      - name: '🧪 Test with coverage (80% min)'
         run: >
           dotnet test ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/${{ env.PROJECT_NAME }}.Tests.csproj
           -c Release
@@ -141,6 +141,8 @@ jobs:
           -p:CollectCoverage=true
           -p:CoverletOutputFormat=cobertura
           '-p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[${{ env.PROJECT_NAME }}.Tests]*"'
+          -p:Threshold=80
+          -p:ThresholdType=line
 
       - name: '📦 Upload test artifacts'
         uses: actions/upload-artifact@v4

@@ -9,7 +9,7 @@ Welcome to the **Plugin.ByteArrays** documentation! This library provides a comp
 ### Installation
 
 ```bash
-# Install from NuGet (when published)
+# Install from NuGet
 dotnet add package Plugin.ByteArrays
 ```
 
