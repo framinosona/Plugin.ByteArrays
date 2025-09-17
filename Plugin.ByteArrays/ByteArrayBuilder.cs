@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Net;
 using System.Text;
 
@@ -46,7 +46,10 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="initialCapacity">The initial capacity to allocate.</param>
     /// <returns>A new ByteArrayBuilder instance.</returns>
-    public static ByteArrayBuilder WithCapacity(int initialCapacity) => new(initialCapacity);
+    public static ByteArrayBuilder WithCapacity(int initialCapacity)
+    {
+        return new(initialCapacity);
+    }
 
     /// <summary>
     ///     Clears the contents of the builder, resetting it to an empty state.
@@ -590,7 +593,10 @@ public sealed class ByteArrayBuilder : IDisposable, IAsyncDisposable
             {
                 var bytesToRead = Math.Min(buffer.Length, remaining);
                 var bytesRead = stream.Read(buffer, 0, bytesToRead);
-                if (bytesRead == 0) break;
+                if (bytesRead == 0)
+                {
+                    break;
+                }
 
                 _memoryStream.Write(buffer, 0, bytesRead);
                 remaining -= bytesRead;

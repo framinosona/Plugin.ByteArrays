@@ -1,5 +1,6 @@
-using FluentAssertions;
 using System.Text;
+
+using FluentAssertions;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -26,7 +27,9 @@ public class ByteArrayAsyncExtensionsTests
         finally
         {
             if (File.Exists(tempFile))
+            {
                 File.Delete(tempFile);
+            }
         }
     }
 
@@ -49,7 +52,9 @@ public class ByteArrayAsyncExtensionsTests
         finally
         {
             if (File.Exists(tempFile))
+            {
                 File.Delete(tempFile);
+            }
         }
     }
 
@@ -71,7 +76,9 @@ public class ByteArrayAsyncExtensionsTests
         finally
         {
             if (File.Exists(tempFile))
+            {
                 File.Delete(tempFile);
+            }
         }
     }
 
@@ -177,7 +184,9 @@ public class ByteArrayAsyncExtensionsTests
                 Interlocked.Increment(ref activeTasks);
                 var current = activeTasks;
                 if (current > maxActiveTasks)
+                {
                     maxActiveTasks = current;
+                }
 
                 await Task.Delay(10); // Simulate work
 

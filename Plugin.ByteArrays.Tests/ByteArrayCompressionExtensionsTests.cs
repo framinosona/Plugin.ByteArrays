@@ -1,6 +1,7 @@
-using FluentAssertions;
 using System.IO.Compression;
 using System.Text;
+
+using FluentAssertions;
 
 namespace Plugin.ByteArrays.Tests;
 

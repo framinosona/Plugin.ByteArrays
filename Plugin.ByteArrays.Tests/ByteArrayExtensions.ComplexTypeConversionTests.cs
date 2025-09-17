@@ -2,9 +2,12 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 

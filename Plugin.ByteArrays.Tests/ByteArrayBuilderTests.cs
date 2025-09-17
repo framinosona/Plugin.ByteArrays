@@ -1,9 +1,12 @@
 using System;
 using System.Net;
 using System.Text;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -32,7 +35,7 @@ public class ByteArrayBuilderTests
     public void ToString_Prints_CommaSeparated()
     {
         using var b = new ByteArrayBuilder();
-        b.Append(new byte[] {1,2,3});
+        b.Append(new byte[] { 1, 2, 3 });
         b.ToString().Should().Be("1,2,3");
     }
 
@@ -52,8 +55,8 @@ public class ByteArrayBuilderTests
          .Append((ulong)7)
          .Append(1.23f)
          .Append(4.56)
-         .Append(new byte[] {9,9})
-         .Append((System.Collections.Generic.IEnumerable<byte>)new byte[] {8})
+         .Append(new byte[] { 9, 9 })
+         .Append((System.Collections.Generic.IEnumerable<byte>)new byte[] { 8 })
          .Append(Small.B)
          .Append(Big.Max);
 
@@ -107,8 +110,8 @@ public class ByteArrayBuilderTests
         using var b2 = new ByteArrayBuilder();
         b2.AppendHexString("0A0B").ToByteArray().Should().Equal(0x0A, 0x0B);
         using var b3 = new ByteArrayBuilder();
-        var b64 = Convert.ToBase64String(new byte[] {1,2});
-        b3.AppendBase64String(b64).ToByteArray().Should().Equal(1,2);
+        var b64 = Convert.ToBase64String(new byte[] { 1, 2 });
+        b3.AppendBase64String(b64).ToByteArray().Should().Equal(1, 2);
     }
 
     [Fact]

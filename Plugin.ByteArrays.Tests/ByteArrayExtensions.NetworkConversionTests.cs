@@ -1,5 +1,6 @@
-using FluentAssertions;
 using System.Net;
+
+using FluentAssertions;
 
 namespace Plugin.ByteArrays.Tests;
 

@@ -1,7 +1,10 @@
 using System;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -10,7 +13,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToBoolean_ReadsAndAdvances()
     {
-        var data = new byte[] {1, 0};
+        var data = new byte[] { 1, 0 };
         var pos = 0;
         data.ToBoolean(ref pos).Should().BeTrue();
         pos.Should().Be(1);
@@ -21,7 +24,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToBoolean_NonRef_Overload_Works()
     {
-        var data = new byte[] {1, 0};
+        var data = new byte[] { 1, 0 };
         data.ToBoolean().Should().BeTrue();
         data.ToBoolean(1).Should().BeFalse();
     }
@@ -29,7 +32,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToBooleanOrDefault_OutOfBounds_ReturnsDefaultAndNoAdvance()
     {
-        var data = new byte[] {1};
+        var data = new byte[] { 1 };
         var pos = 1;
         data.ToBooleanOrDefault(ref pos, defaultValue: true).Should().BeTrue();
         pos.Should().Be(1);
@@ -44,7 +47,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToByte_And_SByte()
     {
-        var data = new byte[] {255, 128};
+        var data = new byte[] { 255, 128 };
         var p = 0;
         data.ToByte(ref p).Should().Be(255);
         data.ToSByte(ref p).Should().Be(unchecked((sbyte)128));
@@ -54,7 +57,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToByte_NonRef_Overloads_Work()
     {
-        var data = new byte[] {255, 128};
+        var data = new byte[] { 255, 128 };
         data.ToByte().Should().Be(255);
         data.ToByte(1).Should().Be(128);
         data.ToSByte().Should().Be(unchecked((sbyte)255));
@@ -64,7 +67,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ToByteOrDefault_And_ToSByteOrDefault_Work()
     {
-        var data = new byte[] {42};
+        var data = new byte[] { 42 };
         var p = 0;
 
         // Success cases
@@ -136,7 +139,7 @@ public class ByteArrayExtensions_PrimitiveTypeConversionTests
     [Fact]
     public void ExecuteConversion_Guards_Throw_On_Invalid_Primitives()
     {
-        var data = new byte[] {1};
+        var data = new byte[] { 1 };
 
         // Test negative position
         Action act1 = () => data.ToBoolean(-1);

@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -70,7 +73,7 @@ public class ByteArrayExtensions_FloatingPointConversionTests
     [Fact]
     public void ToSingleOrDefault_OutOfBounds_ReturnsDefault_NoAdvance()
     {
-        var bytes = new byte[] {1};
+        var bytes = new byte[] { 1 };
         var p = 0;
         bytes.ToSingleOrDefault(ref p, 42f).Should().Be(42f);
         p.Should().Be(0);
@@ -229,7 +232,7 @@ public class ByteArrayExtensions_FloatingPointConversionTests
     [Fact]
     public void Floating_Point_Error_Handling()
     {
-        var data = new byte[] {1, 2, 3};
+        var data = new byte[] { 1, 2, 3 };
 
         // Test negative position errors
         Action act1 = () => data.ToDouble(-1);

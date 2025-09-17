@@ -1,8 +1,11 @@
 using System;
 using System.Text;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -161,7 +164,7 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void ToHexString_Works()
     {
-        var data = new byte[] {0, 10, 255, 0x42};
+        var data = new byte[] { 0, 10, 255, 0x42 };
         data.ToHexString().Should().Be("000AFF42");
         data.ToHexString("-", "0x").Should().Be("0x00-0x0A-0xFF-0x42");
         data.ToHexString(":", prefix: "", upperCase: false).Should().Be("00:0a:ff:42");
@@ -176,7 +179,7 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void ToHexString_CustomFormatting()
     {
-        var data = new byte[] {0xAB, 0xCD};
+        var data = new byte[] { 0xAB, 0xCD };
 
         // Test different separators
         data.ToHexString(" ").Should().Be("AB CD");
@@ -195,9 +198,9 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void FromHexString_Works()
     {
-        var data = new byte[] {0, 10, 255, 0x42};
+        var data = new byte[] { 0, 10, 255, 0x42 };
         ByteArrayExtensions.FromHexString("00 0A-FF:42").Should().BeEquivalentTo(data);
-        ByteArrayExtensions.FromHexString("0X0A").Should().BeEquivalentTo(new byte[] {0x0A});
+        ByteArrayExtensions.FromHexString("0X0A").Should().BeEquivalentTo(new byte[] { 0x0A });
     }
 
     [Fact]
@@ -208,10 +211,10 @@ public class ByteArrayExtensions_StringConversionTests
         ByteArrayExtensions.FromHexString("").Should().BeEmpty();
 
         // Various prefixes and separators
-        ByteArrayExtensions.FromHexString("0x41").Should().BeEquivalentTo(new byte[] {0x41});
-        ByteArrayExtensions.FromHexString("41:42").Should().BeEquivalentTo(new byte[] {0x41, 0x42});
-        ByteArrayExtensions.FromHexString("41-42").Should().BeEquivalentTo(new byte[] {0x41, 0x42});
-        ByteArrayExtensions.FromHexString("41 42").Should().BeEquivalentTo(new byte[] {0x41, 0x42});
+        ByteArrayExtensions.FromHexString("0x41").Should().BeEquivalentTo(new byte[] { 0x41 });
+        ByteArrayExtensions.FromHexString("41:42").Should().BeEquivalentTo(new byte[] { 0x41, 0x42 });
+        ByteArrayExtensions.FromHexString("41-42").Should().BeEquivalentTo(new byte[] { 0x41, 0x42 });
+        ByteArrayExtensions.FromHexString("41 42").Should().BeEquivalentTo(new byte[] { 0x41, 0x42 });
     }
 
     [Fact]
@@ -233,7 +236,7 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void ToBase64String_Works()
     {
-        var data = new byte[] {72, 101, 108, 108, 111}; // "Hello"
+        var data = new byte[] { 72, 101, 108, 108, 111 }; // "Hello"
         data.ToBase64String().Should().Be("SGVsbG8=");
 
         var data2 = Encoding.UTF8.GetBytes("hello");
@@ -250,7 +253,7 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void FromBase64String_Works()
     {
-        var data = new byte[] {72, 101, 108, 108, 111}; // "Hello"
+        var data = new byte[] { 72, 101, 108, 108, 111 }; // "Hello"
         ByteArrayExtensions.FromBase64String("SGVsbG8=").Should().BeEquivalentTo(data);
     }
 
@@ -275,7 +278,7 @@ public class ByteArrayExtensions_StringConversionTests
     [Fact]
     public void String_Conversion_Error_Handling()
     {
-        var data = new byte[] {1, 2, 3};
+        var data = new byte[] { 1, 2, 3 };
 
         // Test negative position errors
         Action act1 = () => data.ToUtf8String(-1);

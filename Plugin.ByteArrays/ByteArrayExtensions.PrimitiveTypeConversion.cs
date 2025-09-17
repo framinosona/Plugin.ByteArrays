@@ -1,4 +1,4 @@
-﻿namespace Plugin.ByteArrays;
+namespace Plugin.ByteArrays;
 
 /// <summary>
 ///     Functions converting other types into a byte array.

@@ -3,9 +3,12 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -26,8 +29,8 @@ public class ObjectToByteArrayExtensionsTests
         "0A0BFF".HexStringToByteArray().Should().Equal(0x0A, 0x0B, 0xFF);
         Action odd = () => "ABC".HexStringToByteArray();
         odd.Should().Throw<ArgumentException>();
-        var b64 = Convert.ToBase64String(new byte[] {1,2,3});
-        b64.Base64StringToByteArray().Should().Equal(1,2,3);
+        var b64 = Convert.ToBase64String(new byte[] { 1, 2, 3 });
+        b64.Base64StringToByteArray().Should().Equal(1, 2, 3);
     }
 
     [Fact]
@@ -36,7 +39,7 @@ public class ObjectToByteArrayExtensionsTests
         123.ToByteArray().Should().Equal(BitConverter.GetBytes(123));
         123.45.ToByteArray().Should().Equal(BitConverter.GetBytes(123.45));
         ((int?)null).ToByteArray().Should().BeEmpty();
-        new byte[] {1,2}.ToByteArray().Should().Equal(1,2);
+        new byte[] { 1, 2 }.ToByteArray().Should().Equal(1, 2);
     }
 
     #region JSON Serialization Tests

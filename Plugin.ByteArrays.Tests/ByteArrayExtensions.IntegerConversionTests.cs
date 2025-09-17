@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
-using Plugin.ByteArrays;
-using Xunit;
+
 using FluentAssertions;
+
+using Plugin.ByteArrays;
+
+using Xunit;
 
 namespace Plugin.ByteArrays.Tests;
 
@@ -208,7 +211,7 @@ public class ByteArrayExtensions_IntegerConversionTests
     [Fact]
     public void ExecuteConversion_Guards_Throw_On_Invalid_Integers()
     {
-        var data = new byte[] {1, 2, 3, 4};
+        var data = new byte[] { 1, 2, 3, 4 };
 
         // Test negative position
         Action act = () => data.ToInt32(-1);

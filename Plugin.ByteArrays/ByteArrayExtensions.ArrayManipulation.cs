@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 
 namespace Plugin.ByteArrays;
@@ -216,7 +216,9 @@ public static partial class ByteArrayExtensions
         var bitIndex = bitPosition % 8;
 
         if (byteIndex >= array.Length)
+        {
             throw new ArgumentOutOfRangeException(nameof(bitPosition), "Bit position exceeds array length");
+        }
 
         var result = new byte[array.Length];
         Array.Copy(array, result, array.Length);
@@ -239,7 +241,9 @@ public static partial class ByteArrayExtensions
         var bitIndex = bitPosition % 8;
 
         if (byteIndex >= array.Length)
+        {
             throw new ArgumentOutOfRangeException(nameof(bitPosition), "Bit position exceeds array length");
+        }
 
         return (array[byteIndex] & (1 << bitIndex)) != 0;
     }
