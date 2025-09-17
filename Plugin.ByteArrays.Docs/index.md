@@ -47,6 +47,8 @@ Build byte arrays fluently from various data types:
 
 - Primitives (int, float, bool, etc.)
 - Strings (UTF-8, ASCII, Hex, Base64)
+- Date/Time types (DateTime, TimeSpan, DateTimeOffset)
+- Network types (IP addresses, endpoints)
 - Enums and custom objects
 - Efficient memory management with IDisposable
 
@@ -56,7 +58,9 @@ Extract data from byte arrays safely:
 
 - **Primitives**: `ToBoolean`, `ToByte`, `ToInt32`, `ToDouble`, etc.
 - **Strings**: `ToUtf8String`, `ToAsciiString`, `ToHexString`
-- **Complex Types**: `ToEnum<T>`, `ToVersion`
+- **Date & Time**: `ToDateTime`, `ToTimeSpan`, `ToDateTimeFromUnixTimestamp`
+- **Network Types**: `ToIPAddress`, `ToIPEndPoint`, big-endian conversions
+- **Complex Types**: `ToEnum<T>`, `ToVersion`, `ToGuid`
 - **Safe Variants**: `OrDefault` methods that never throw exceptions
 
 ### ⚙️ Array Manipulation
@@ -67,6 +71,7 @@ Powerful array operations:
 - **Concatenation**: `Concatenate` multiple arrays efficiently
 - **Trimming**: `TrimEnd` and `TrimEndNonDestructive`
 - **Transformation**: `Reverse`, `Xor` operations
+- **Analysis**: `CalculateEntropy`, `AnalyzeDistribution`
 
 ### 🔎 Pattern Matching
 
@@ -76,6 +81,40 @@ Search and compare byte arrays:
 - **Equality**: `IsIdenticalTo` with optimized comparisons
 - **Format Conversion**: Hex and Base64 utilities
 
+### 🌐 Network & Protocol Support
+
+Comprehensive networking capabilities:
+
+- **IP Addresses**: IPv4 and IPv6 conversion and validation
+- **Endpoints**: IPEndPoint serialization with network byte order
+- **Big-Endian**: Network protocol numeric conversions
+- **TLV Parsing**: Type-Length-Value protocol structures
+
+### ⏱️ Async Operations
+
+Asynchronous processing with cancellation:
+
+- **File I/O**: `WriteToFileAsync`, `ReadFromFileAsync`
+- **Parallel Processing**: Multi-threaded array operations
+- **Cryptographic**: Hash computation and random generation
+
+### 🗃️ Compression
+
+Multiple compression algorithms:
+
+- **GZip**: Standard compression with good balance
+- **Deflate**: Raw deflate algorithm
+- **Brotli**: Modern compression with best ratios
+
+### 🔍 Utilities & Analysis
+
+Advanced analysis and formatting:
+
+- **Binary Representation**: Convert to binary strings
+- **Statistical Analysis**: Entropy and distribution calculation
+- **Performance Measurement**: Built-in timing utilities
+- **Memory Analysis**: Memory usage estimation
+
 ---
 
 ## 📖 Documentation Sections
@@ -83,6 +122,7 @@ Search and compare byte arrays:
 | Section | Description |
 |---------|-------------|
 | [API Reference](./api/Plugin.ByteArrays.html) | Complete API documentation |
+| [Features](./FEATURES.html) | Comprehensive feature list |
 
 ---
 
@@ -98,6 +138,115 @@ Search and compare byte arrays:
 
 ## 🚀 Advanced Examples
 
+### Working with DateTime and Time Types
+
+```csharp
+// DateTime operations
+var now = DateTime.Now;
+using var builder = new ByteArrayBuilder();
+builder.Append(now.ToBinary());
+byte[] data = builder.ToByteArray();
+
+// Read back with position tracking
+var pos = 0;
+DateTime restored = data.ToDateTime(ref pos);
+
+// Unix timestamp support
+int unixTime = 1672502400;
+byte[] timeData = BitConverter.GetBytes(unixTime);
+pos = 0;
+DateTime fromUnix = timeData.ToDateTimeFromUnixTimestamp(ref pos);
+
+// TimeSpan and DateTimeOffset
+var span = TimeSpan.FromHours(2.5);
+var offset = new DateTimeOffset(now, TimeSpan.FromHours(-8));
+```
+
+### Network Protocol Processing
+
+```csharp
+// IP address handling
+var ipv4 = IPAddress.Parse("192.168.1.1");
+var ipv6 = IPAddress.Parse("2001:db8::1");
+
+byte[] ipData = ipv4.GetAddressBytes();
+pos = 0;
+IPAddress restored = ipData.ToIPAddress(ref pos);
+
+// Network endpoints with big-endian ports
+var endpoint = new IPEndPoint(ipv4, 8080);
+byte[] endpointData = SerializeEndpoint(endpoint); // Custom serialization
+pos = 0;
+var restoredEndpoint = endpointData.ToIPEndPoint(ref pos);
+
+// Big-endian network data
+byte[] networkPacket = { 0x12, 0x34, 0x56, 0x78 };
+pos = 0;
+int sequenceNumber = networkPacket.ToInt32BigEndian(ref pos); // 0x12345678
+
+// TLV protocol parsing
+byte[] tlvData = { 0x01, 0x00, 0x05, 0x48, 0x65, 0x6C, 0x6C, 0x6F };
+pos = 0;
+var tlv = tlvData.ParseTlv(ref pos);
+string value = Encoding.UTF8.GetString(tlv.Value); // "Hello"
+```
+
+### Async Operations with Cancellation
+
+```csharp
+// File operations
+byte[] data = "Important data".Utf8StringToByteArray();
+await data.WriteToFileAsync("output.bin");
+
+byte[] fileData = await ByteArrayAsyncExtensions.ReadFromFileAsync("input.bin");
+
+// Parallel processing with timeout
+var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+byte[][] chunks = SplitDataIntoChunks(largeData, chunkSize: 1024);
+
+var results = await chunks.ProcessInParallelAsync(
+    async (chunk, ct) => {
+        // Process each chunk
+        await SimulateAsyncWork(chunk, ct);
+        return chunk.CompressGZip();
+    },
+    maxDegreeOfParallelism: Environment.ProcessorCount,
+    cancellationToken: cts.Token
+);
+
+// Cryptographic operations
+byte[] hash = await data.ComputeSha256Async();
+byte[] randomData = await ByteArrayAsyncExtensions.GenerateRandomBytesAsync(32);
+```
+
+### Compression and Analysis
+
+```csharp
+// Multi-algorithm compression comparison
+byte[] originalData = File.ReadAllBytes("document.pdf");
+
+byte[] gzipData = originalData.CompressGZip();
+byte[] deflateData = originalData.CompressDeflate();
+byte[] brotliData = originalData.CompressBrotli();
+
+Console.WriteLine($"Original: {originalData.Length:N0} bytes");
+Console.WriteLine($"GZip: {gzipData.Length:N0} bytes ({GetCompressionRatio(originalData, gzipData):P1})");
+Console.WriteLine($"Brotli: {brotliData.Length:N0} bytes ({GetCompressionRatio(originalData, brotliData):P1})");
+
+// Statistical analysis
+double entropy = originalData.CalculateEntropy();
+var distribution = originalData.AnalyzeDistribution();
+
+Console.WriteLine($"Data entropy: {entropy:F3}");
+Console.WriteLine($"Most frequent byte: 0x{distribution.MostFrequentByte:X2} ({distribution.MaxFrequency} occurrences)");
+
+// Performance measurement
+var stopwatch = originalData.StartPerformanceMeasurement();
+// Perform operations...
+var elapsed = originalData.StopPerformanceMeasurement(stopwatch);
+Console.WriteLine($"Processing took: {elapsed.TotalMilliseconds:F2}ms");
+```
+
 ### Working with Complex Data
 
 ```csharp
@@ -108,6 +257,7 @@ var data = builder
     .AppendUtf8String("UserData")     // Section name
     .Append(DateTime.Now)             // Timestamp
     .Append(MyEnum.Active)            // Status
+    .Append(Guid.NewGuid())           // Unique ID
     .AppendHexString("DEADBEEF")      // Binary data
     .ToByteArray();
 
@@ -117,21 +267,14 @@ var header = data.ToUInt16(ref pos);
 var section = data.ToUtf8String(ref pos, 8);
 var timestamp = data.ToDateTime(ref pos);
 var status = data.ToEnum<MyEnum>(ref pos);
-```
+var id = data.ToGuid(ref pos);
+var binaryData = data.SafeSlice(pos, 4);
 
-### Error-Safe Reading
-
-```csharp
-byte[] data = GetDataFromSomewhere();
-var pos = 0;
-
-// These methods never throw - they return defaults on error
-var id = data.ToInt32OrDefault(ref pos, defaultValue: -1);
-var name = data.ToUtf8StringOrDefault(ref pos, 20, defaultValue: "Unknown");
-var version = data.ToVersionOrDefault(ref pos, defaultValue: new Version(1, 0));
-
-// Position only advances on successful reads
-Console.WriteLine($"Processed {pos} bytes successfully");
+// TLV record creation and parsing
+var tlvRecord = new TlvRecord(0x01, "Hello World".Utf8StringToByteArray());
+byte[] tlvBytes = tlvRecord.ToByteArray();
+pos = 0;
+var parsedTlv = tlvBytes.ParseTlv(ref pos);
 ```
 
 ---

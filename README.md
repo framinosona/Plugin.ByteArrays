@@ -16,6 +16,12 @@ A comprehensive set of utilities for working with byte arrays in .NET applicatio
 
 - **ByteArrayBuilder**: Fluently build byte arrays from various types and encodings
 - **ByteArrayExtensions**: Extension methods for reading primitives, strings, and complex types from byte arrays
+- **DateTime & Time Operations**: Convert DateTime, TimeSpan, DateTimeOffset, and Unix timestamps
+- **Network & Protocol Support**: IP addresses, endpoints, big-endian conversions, and TLV protocol parsing
+- **Async Operations**: File I/O, parallel processing, and cryptographic operations with cancellation support
+- **Compression**: GZip, Deflate, and Brotli compression/decompression
+- **GUID Operations**: Convert between GUIDs and byte arrays with multiple format options
+- **Utilities & Analysis**: Binary string representation, entropy calculation, and performance measurement
 - **Array Manipulation**: Safe operations like slicing, concatenation, trimming, reversing, and XOR
 - **Pattern Matching**: Search and compare byte arrays with StartsWith, EndsWith, IndexOf, and equality checks
 - **Format Conversion**: Convert to/from hex strings, Base64, ASCII, and UTF-8 encodings
@@ -114,6 +120,167 @@ string base64 = data.ToBase64String();
 string utf8 = data.ToUtf8String(ref position, length: 5);
 ```
 
+### DateTime and Time Operations
+
+```csharp
+using Plugin.ByteArrays;
+
+// DateTime conversions
+var now = DateTime.Now;
+byte[] dateTimeBytes = BitConverter.GetBytes(now.ToBinary());
+var position = 0;
+DateTime restored = dateTimeBytes.ToDateTime(ref position);
+
+// Unix timestamp support
+int unixTimestamp = 1672502400; // 2023-01-01 00:00:00 UTC
+byte[] timestampBytes = BitConverter.GetBytes(unixTimestamp);
+position = 0;
+DateTime fromUnix = timestampBytes.ToDateTimeFromUnixTimestamp(ref position);
+
+// TimeSpan operations
+var timeSpan = new TimeSpan(1, 2, 3, 4, 5);
+byte[] spanBytes = BitConverter.GetBytes(timeSpan.Ticks);
+position = 0;
+TimeSpan restoredSpan = spanBytes.ToTimeSpan(ref position);
+
+// DateTimeOffset with timezone
+var offset = new DateTimeOffset(2023, 6, 15, 14, 30, 0, TimeSpan.FromHours(-8));
+// Complex serialization combining DateTime and TimeSpan
+```
+
+### Network and Protocol Operations
+
+```csharp
+using Plugin.ByteArrays;
+using System.Net;
+
+// IP Address conversions
+var ipv4 = IPAddress.Parse("192.168.1.1");
+byte[] ipBytes = ipv4.GetAddressBytes();
+position = 0;
+IPAddress restored = ipBytes.ToIPAddress(ref position);
+
+// IPv6 support
+var ipv6 = IPAddress.Parse("2001:db8::1");
+byte[] ipv6Bytes = ipv6.GetAddressBytes();
+position = 0;
+IPAddress restoredV6 = ipv6Bytes.ToIPAddress(ref position, isIPv6: true);
+
+// Network endpoints
+var endpoint = new IPEndPoint(ipv4, 8080);
+// Serialize endpoint with network byte order (big-endian)
+var endpointBytes = ipv4.GetAddressBytes()
+    .Concat(BitConverter.GetBytes((ushort)8080).Reverse())
+    .ToArray();
+position = 0;
+var restoredEndpoint = endpointBytes.ToIPEndPoint(ref position);
+
+// Big-endian numeric conversions for network protocols
+byte[] networkData = { 0x12, 0x34, 0x56, 0x78 };
+position = 0;
+int networkInt = networkData.ToInt32BigEndian(ref position); // 0x12345678
+
+// TLV (Type-Length-Value) protocol parsing
+byte[] tlvData = { 0x01, 0x00, 0x05, 0x48, 0x65, 0x6C, 0x6C, 0x6F }; // Type=1, Length=5, Value="Hello"
+position = 0;
+var tlvRecord = tlvData.ParseTlv(ref position);
+Console.WriteLine($"Type: {tlvRecord.Type}, Value: {Encoding.UTF8.GetString(tlvRecord.Value)}");
+```
+
+### Async Operations
+
+```csharp
+using Plugin.ByteArrays;
+
+// Async file operations
+byte[] data = { 0x01, 0x02, 0x03, 0x04 };
+await data.WriteToFileAsync("output.bin");
+byte[] fileData = await ByteArrayAsyncExtensions.ReadFromFileAsync("input.bin");
+
+// Parallel processing with cancellation
+var source = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+byte[][] chunks = { data1, data2, data3, data4 };
+
+var results = await chunks.ProcessInParallelAsync(
+    async (chunk, ct) => {
+        // Process each chunk asynchronously
+        return await SomeAsyncOperation(chunk, ct);
+    },
+    maxDegreeOfParallelism: 4,
+    cancellationToken: source.Token
+);
+
+// Cryptographic operations
+byte[] hash = await data.ComputeSha256Async();
+byte[] randomBytes = await ByteArrayAsyncExtensions.GenerateRandomBytesAsync(32);
+```
+
+### Compression
+
+```csharp
+using Plugin.ByteArrays;
+
+byte[] originalData = "This is some data to compress".Utf8StringToByteArray();
+
+// GZip compression
+byte[] gzipCompressed = originalData.CompressGZip();
+byte[] gzipDecompressed = gzipCompressed.DecompressGZip();
+
+// Deflate compression
+byte[] deflateCompressed = originalData.CompressDeflate();
+byte[] deflateDecompressed = deflateCompressed.DecompressDeflate();
+
+// Brotli compression (best compression ratio)
+byte[] brotliCompressed = originalData.CompressBrotli();
+byte[] brotliDecompressed = brotliCompressed.DecompressBrotli();
+
+// Compare compression ratios
+Console.WriteLine($"Original: {originalData.Length} bytes");
+Console.WriteLine($"GZip: {gzipCompressed.Length} bytes ({(double)gzipCompressed.Length/originalData.Length:P1})");
+Console.WriteLine($"Brotli: {brotliCompressed.Length} bytes ({(double)brotliCompressed.Length/originalData.Length:P1})");
+```
+
+### GUID Operations
+
+```csharp
+using Plugin.ByteArrays;
+
+// GUID conversions
+var guid = Guid.NewGuid();
+byte[] guidBytes = guid.ToByteArray();
+position = 0;
+Guid restored = guidBytes.ToGuid(ref position);
+
+// Safe GUID operations
+Guid safeGuid = invalidData.ToGuidOrDefault(ref position, Guid.Empty);
+```
+
+### Utilities and Analysis
+
+```csharp
+using Plugin.ByteArrays;
+
+byte[] data = { 0xAA, 0xBB, 0xCC, 0xDD };
+
+// Binary representation
+string binary = data.ToBinaryString(); // "10101010 10111011 11001100 11011101"
+
+// Statistical analysis
+double entropy = data.CalculateEntropy();
+var stats = data.AnalyzeDistribution();
+Console.WriteLine($"Entropy: {entropy:F3}, Most frequent byte: 0x{stats.MostFrequentByte:X2}");
+
+// Performance measurement
+var stopwatch = data.StartPerformanceMeasurement();
+// ... do some operations ...
+var elapsed = data.StopPerformanceMeasurement(stopwatch);
+Console.WriteLine($"Operation took: {elapsed.TotalMilliseconds:F2}ms");
+
+// Memory usage analysis
+long memoryUsage = data.EstimateMemoryUsage();
+Console.WriteLine($"Estimated memory usage: {memoryUsage} bytes");
+```
+
 ### Object Serialization
 
 ```csharp
@@ -139,6 +306,10 @@ byte[] enumBytes = enumValue.ToByteArray();
 
 - **`ByteArrayBuilder`** - Fluent builder for constructing byte arrays
 - **`ByteArrayExtensions`** - Extension methods for reading and manipulating byte arrays
+- **`ByteArrayAsyncExtensions`** - Asynchronous operations for file I/O and parallel processing
+- **`ByteArrayCompressionExtensions`** - Compression and decompression utilities
+- **`ByteArrayUtilities`** - Analysis, formatting, and performance measurement tools
+- **`ByteArrayProtocolExtensions`** - Protocol parsing including TLV structures
 - **`ObjectToByteArrayExtensions`** - Object-to-byte-array conversion helpers
 
 ### Reading Operations
@@ -146,19 +317,35 @@ byte[] enumBytes = enumValue.ToByteArray();
 - **Primitives**: `ToBoolean`, `ToByte`, `ToSByte`, `ToChar`, `ToInt16/32/64`, `ToUInt16/32/64`
 - **Floating Point**: `ToSingle`, `ToDouble`, `ToHalf`
 - **Strings**: `ToUtf8String`, `ToAsciiString`, `ToHexString`, `ToBase64String`
-- **Complex Types**: `ToEnum<T>`, `ToVersion`
+- **Date & Time**: `ToDateTime`, `ToTimeSpan`, `ToDateTimeOffset`, `ToDateTimeFromUnixTimestamp`
+- **Network Types**: `ToIPAddress`, `ToIPEndPoint`, big-endian numeric conversions
+- **Complex Types**: `ToEnum<T>`, `ToVersion`, `ToGuid`
+- **Protocol Structures**: `ParseTlv`, `ParseFixedLengthRecords`
 - **Safe Variants**: All methods have `OrDefault` versions that return defaults instead of throwing
 
 ### Writing Operations
 
 - **Fluent Building**: `Append<T>`, `AppendUtf8String`, `AppendAsciiString`, `AppendHexString`, `AppendBase64String`
 - **Direct Conversion**: `Utf8StringToByteArray`, `HexStringToByteArray`, `ToByteArray<T>`
+- **Object Serialization**: Convert any supported type to byte arrays
+
+### Async Operations
+
+- **File I/O**: `WriteToFileAsync`, `ReadFromFileAsync`, `AppendToFileAsync`
+- **Parallel Processing**: `ProcessInParallelAsync`, `TransformInParallelAsync`
+- **Cryptographic**: `ComputeSha256Async`, `ComputeMd5Async`, `GenerateRandomBytesAsync`
+
+### Compression
+
+- **Algorithms**: `CompressGZip/DecompressGZip`, `CompressDeflate/DecompressDeflate`, `CompressBrotli/DecompressBrotli`
+- **Utilities**: Compression ratio analysis and format detection
 
 ### Array Operations
 
 - **Manipulation**: `SafeSlice`, `Concatenate`, `TrimEnd`, `TrimEndNonDestructive`, `Reverse`, `Xor`
 - **Pattern Matching**: `StartsWith`, `EndsWith`, `IndexOf`, `IsIdenticalTo`
-- **Debugging**: `ToDebugString`, `ToHexDebugString`
+- **Analysis**: `ToBinaryString`, `CalculateEntropy`, `AnalyzeDistribution`
+- **Debugging**: `ToDebugString`, `ToHexDebugString`, performance measurement
 
 ---
 

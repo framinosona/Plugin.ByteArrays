@@ -1,9 +1,13 @@
 # Plugin.ByteArrays - AI Coding Agent Instructions
 
 ## Project Overview
-This is a .NET 9 library providing comprehensive byte array utilities for performance-critical applications. The library offers three main components:
+This is a .NET 9 library providing comprehensive byte array utilities for performance-critical applications. The library offers multiple specialized components:
 - **ByteArrayBuilder**: Fluent builder for constructing byte arrays from various types
 - **ByteArrayExtensions**: Extension methods for reading/manipulating byte arrays
+- **ByteArrayAsyncExtensions**: Asynchronous operations for file I/O and parallel processing
+- **ByteArrayCompressionExtensions**: Compression and decompression utilities
+- **ByteArrayUtilities**: Analysis, formatting, and performance measurement tools
+- **ByteArrayProtocolExtensions**: Protocol parsing including TLV structures
 - **ObjectToByteArrayExtensions**: Type-safe object-to-byte-array conversions
 
 ## Architecture Patterns
@@ -17,6 +21,16 @@ The `ByteArrayExtensions` class is split across multiple files using `partial cl
 - `ByteArrayExtensions.StringConversion.cs` - UTF-8, ASCII, hex, Base64 conversions
 - `ByteArrayExtensions.ComplexTypeConversion.cs` - Enum, Version, complex types
 - `ByteArrayExtensions.ArrayManipulation.cs` - Slicing, concatenation, trimming, XOR
+- `ByteArrayExtensions.DateTimeConversion.cs` - DateTime, TimeSpan, DateTimeOffset, Unix timestamps
+- `ByteArrayExtensions.NetworkConversion.cs` - IP addresses, endpoints, big-endian conversions
+- `ByteArrayExtensions.GuidConversion.cs` - GUID conversion utilities
+
+### Specialized Extension Classes
+Each specialized area has its own dedicated class:
+- `ByteArrayAsyncExtensions` - Async operations with cancellation support
+- `ByteArrayCompressionExtensions` - GZip, Deflate, Brotli compression
+- `ByteArrayUtilities` - Analysis, entropy calculation, performance measurement
+- `ByteArrayProtocolExtensions` - TLV parsing and protocol structures
 
 ### Method Overload Pattern
 Every conversion method follows this pattern:
