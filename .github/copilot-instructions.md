@@ -44,8 +44,9 @@ All conversions use `ExecuteConversionToType<T>()` which:
 
 ### Test Structure
 - Tests use **xUnit** with **FluentAssertions** (v7.2.0 for licensing)
-- Test classes follow naming: `{ClassName}Tests` (e.g., `ByteArrayBuilderTests`)
+- Test classes mirror main project structure with 1:1 mapping: `{ClassName}Tests` (e.g., `ByteArrayBuilderTests`)
 - Test methods use descriptive names: `Method_Scenario_ExpectedResult`
+- Each partial class file has its own dedicated test file for focused testing and maintainability
 
 ### Test Patterns
 ```csharp

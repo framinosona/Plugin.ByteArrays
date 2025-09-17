@@ -45,6 +45,15 @@ All projects follow a three-tier MSBuild configuration:
 - Test class naming: `{ClassName}Tests`
 - Test method naming: `Method_Scenario_ExpectedResult`
 
+### Test Organization Pattern
+Mirror your main project file structure in tests with strict 1:1 mapping:
+- Each main project file should have exactly one corresponding test file
+- Use identical naming: `ClassName.cs` → `ClassNameTests.cs`
+- For partial classes: `ByteArrayExtensions.PrimitiveTypeConversion.cs` → `ByteArrayExtensions.PrimitiveTypeConversionTests.cs`
+- Avoid bundling multiple source files into single test files
+- Avoid `Coverage_*` or utility test files - integrate tests into appropriate category files
+- Test file organization should exactly mirror source code organization for maintainability
+
 ### Test Patterns
 ```csharp
 // Standard test structure
