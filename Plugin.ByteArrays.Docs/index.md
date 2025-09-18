@@ -119,10 +119,31 @@ Advanced analysis and formatting:
 
 ## 📖 Documentation Sections
 
-| Section | Description |
-|---------|-------------|
-| [API Reference](./api/Plugin.ByteArrays.html) | Complete API documentation |
-| [Features](./FEATURES.html) | Comprehensive feature list |
+### 📋 API Reference
+
+#### Core Extensions
+| Class | Description |
+|-------|-------------|
+| [ByteArrayExtensions](ByteArrayExtensions.md) | Core utilities, pattern matching, and array comparison |
+| [ByteArrayExtensions.PrimitiveTypeConversion](ByteArrayExtensions.PrimitiveTypeConversion.md) | Boolean, byte, char, and basic type conversions |
+| [ByteArrayExtensions.IntegerConversion](ByteArrayExtensions.IntegerConversion.md) | Integer type conversions (Int16, Int32, Int64, UInt variants) |
+| [ByteArrayExtensions.FloatingPointConversion](ByteArrayExtensions.FloatingPointConversion.md) | Float, double, and Half precision conversions |
+| [ByteArrayExtensions.StringConversion](ByteArrayExtensions.StringConversion.md) | UTF-8, ASCII, hex, and Base64 string operations |
+| [ByteArrayExtensions.ComplexTypeConversion](ByteArrayExtensions.ComplexTypeConversion.md) | Enum, Version, and complex type conversions |
+| [ByteArrayExtensions.ArrayManipulation](ByteArrayExtensions.ArrayManipulation.md) | Slicing, concatenation, trimming, and XOR operations |
+| [ByteArrayExtensions.DateTimeConversion](ByteArrayExtensions.DateTimeConversion.md) | DateTime, TimeSpan, DateTimeOffset, and Unix timestamps |
+| [ByteArrayExtensions.NetworkConversion](ByteArrayExtensions.NetworkConversion.md) | IP addresses, endpoints, and big-endian conversions |
+| [ByteArrayExtensions.GuidConversion](ByteArrayExtensions.GuidConversion.md) | GUID conversion utilities |
+
+#### Specialized Classes
+| Class | Description |
+|-------|-------------|
+| [ByteArrayBuilder](ByteArrayBuilder.md) | Fluent builder for constructing byte arrays from various types |
+| [ByteArrayAsyncExtensions](ByteArrayAsyncExtensions.md) | Asynchronous operations for file I/O and parallel processing |
+| [ByteArrayCompressionExtensions](ByteArrayCompressionExtensions.md) | Compression and decompression utilities (GZip, Deflate, Brotli) |
+| [ByteArrayProtocolExtensions](ByteArrayProtocolExtensions.md) | Protocol parsing including TLV structures, framing, and checksums |
+| [ByteArrayUtilities](ByteArrayUtilities.md) | Analysis, formatting, and performance measurement tools |
+| [ObjectToByteArrayExtensions](ObjectToByteArrayExtensions.md) | Type-safe object-to-byte-array conversions and JSON serialization |
 
 ---
 
