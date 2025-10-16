@@ -6,7 +6,7 @@
 
 </div>
 
-[![CI](https://github.com/framinosona/Plugin.ByteArrays/actions/workflows/ci.yml/badge.svg)](https://github.com/framinosona/Plugin.ByteArrays/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/framinosona/Plugin.ByteArrays/ci.yml?logo=github)](https://github.com/framinosona/Plugin.ByteArrays/actions/workflows/ci.yml)
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![NuGet](https://img.shields.io/nuget/v/Plugin.ByteArrays?logo=nuget&color=004880)](https://www.nuget.org/packages/Plugin.ByteArrays)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Plugin.ByteArrays?logo=nuget&color=004880)](https://www.nuget.org/packages/Plugin.ByteArrays)
