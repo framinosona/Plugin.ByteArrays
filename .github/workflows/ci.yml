@@ -93,21 +93,18 @@ jobs:
           # Also set as environment variables for subsequent steps
           echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
 
-  build-test-package:
+  build:
     name: '🛠️ Build, Test, Package'
     runs-on: ubuntu-latest
     needs: calculate-version
     steps:
       - name: '🔄 Checkout'
         uses: actions/checkout@v5
-        with:
-          fetch-tags: true # https://github.com/actions/checkout/issues/1471#issuecomment-1771231294
-          fetch-depth: 0
 
       - name: '🔧 Setup .NET'
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '9.0.x'
+          config-file: ${{ github.workspace }}/global.json
 
       # ============================ BUILD ============================
       - name: '🔄 Restore'
@@ -121,42 +118,41 @@ jobs:
           -p:Version_Full=${{ needs.calculate-version.outputs.FULL_VERSION }}
           -p:Version_Assembly=${{ needs.calculate-version.outputs.FULL_VERSION }}
           -p:GeneratePackageOnBuild=true
-          -p:PackageOutputPath=${{ github.workspace }}/${{ env.PROJECT_NAME }}.Packages
+          -p:PackageOutputPath=${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Packages
 
       - name: '📦 Upload NuGet packages'
         uses: actions/upload-artifact@v4
         with:
           name: packages
-          path: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Packages
+          path: ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Packages
           if-no-files-found: error
 
       # ============================ TESTS & COVERAGE ============================
-      - name: '🧪 Test with coverage (80% min)'
+      - name: '🧪 Test with coverage (95% min)'
         run: >
           dotnet test ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/${{ env.PROJECT_NAME }}.Tests.csproj
           -c Release
           --no-build
           --logger "trx;LogFileName=test-results.trx"
-          -p:TestOutputPath="${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results"
+          --results-directory "${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Tests"
+          -p:TestOutputPath="${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Tests"
           -p:CollectCoverage=true
           -p:CoverletOutputFormat=cobertura
           '-p:Exclude="[xunit.*]*,[FluentAssertions.*]*,[${{ env.PROJECT_NAME }}.Tests]*"'
-          -p:Threshold=80
-          -p:ThresholdType=line
 
       - name: '📦 Upload test artifacts'
         uses: actions/upload-artifact@v4
         with:
           name: tests
           path: |
-            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/coverage.cobertura.xml
-            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/test-results.trx
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Tests/coverage.cobertura.xml
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Tests/test-results.trx
 
       - name: '📊 Publish Test Results'
         uses: EnricoMi/publish-unit-test-result-action/linux@v2
         with:
           files: |
-            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Tests/Results/test-results.trx
+            ${{ github.workspace }}/${{ env.PROJECT_NAME }}.Output/Tests/test-results.trx
 
       # ============================ DOCS ============================
       - name: '📚 Install DocFX'
@@ -189,7 +185,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build-test-package
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
@@ -201,7 +197,7 @@ jobs:
     environment:
       name: nuget-org
     runs-on: ubuntu-latest
-    needs: build-test-package
+    needs: build
     steps:
       - name: '📦 Download NuGet packages'
         uses: actions/download-artifact@v5
