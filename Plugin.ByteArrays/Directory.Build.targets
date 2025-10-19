@@ -12,7 +12,20 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DebugSymbols>true</DebugSymbols>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
+
+  <!-- ==================== LOGGING ==================== -->
+  <Target Name="PrintBuildInfo" BeforeTargets="CoreCompile">
+    <Message Importance="High" Text="Building : $(PackageId) - $(TargetFramework) - $(AssemblyFileVersion)" />
+    <Message Importance="High" Text="ArtifactsPath        : $(ArtifactsPath)" />
+    <Message Importance="High" Text="PackageOutputPath    : $(PackageOutputPath)" />
+    <Message Importance="High" Text="IsHostMachineWindows : $(IsHostMachineWindows)" />
+    <Message Importance="High" Text="IsHostMachineOSX     : $(IsHostMachineOSX)" />
+    <Message Importance="High" Text="IsHostMachineLinux   : $(IsHostMachineLinux)" />
+    <Message Importance="High" Text="IsHostMachineUnix    : $(IsHostMachineUnix)" />
+  </Target>
 
   <!-- ==================== VERSION ==================== -->
   <PropertyGroup>
@@ -31,12 +44,6 @@
     <ApplicationDisplayVersion>$(Version_Full)</ApplicationDisplayVersion>
     <ApplicationVersion>$(Version_Revision)</ApplicationVersion>
   </PropertyGroup>
-
-  <!-- ==================== LOGGING ==================== -->
-  <Target Name="PrintBuildInfo" BeforeTargets="CoreCompile">
-    <Message Importance="High" Text="Building : $(PackageId) - $(TargetFramework) - $(AssemblyFileVersion)" />
-    <Message Importance="High" Text="PackageOutputPath   : $(PackageOutputPath)" />
-  </Target>
 
   <!-- ==================== GENERAL : VARIABLES ==================== -->
   <PropertyGroup>
@@ -79,7 +86,10 @@
     <!-- Extra files and properties -->
     <PackageTags>$(Project_Tags)</PackageTags>
     <PackageOutputPath Condition="'$(PackageOutputPath)' == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `../output/packages`))</PackageOutputPath>
+  </PropertyGroup>
 
+  <!-- ==================== PACK : RESOURCES ==================== -->
+  <PropertyGroup>
     <PackageIconPath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `../icon.png`))</PackageIconPath>
     <PackageLicencePath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `../LICENSE`))</PackageLicencePath>
     <PackageReadMePath>$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `../README.md`))</PackageReadMePath>
@@ -133,4 +143,10 @@
     <AdditionalFiles Include="PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup> -->
+
+  <!-- ==================== MAUI INTEGRATION ==================== -->
+  <PropertyGroup>
+    <MauiTargetsFile Condition=" $(MauiTargetsFile) == ''">$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), `Directory.Build.Maui.targets`))</MauiTargetsFile>
+  </PropertyGroup>
+  <Import Condition=" '$(UseMaui)' == 'true' AND Exists('$(MauiTargetsFile)')" Project="$(MauiTargetsFile)" />
 </Project>
