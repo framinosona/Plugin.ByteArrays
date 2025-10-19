@@ -5,14 +5,17 @@ The `ByteArrayProtocolExtensions` class provides specialized extensions for prot
 ## TlvRecord Structure
 
 ### Overview
+
 The `TlvRecord` is a readonly struct representing a Type-Length-Value structure commonly used in network protocols and binary data formats.
 
 ### Properties
+
 - **Type**: `byte` - The type field of the TLV record
 - **Length**: `ushort` - The length field of the TLV record
 - **Value**: `IReadOnlyList<byte>` - The value field of the TLV record
 
 ### Example Usage
+
 ```csharp
 // Create a TLV record
 var tlvRecord = new TlvRecord(0x01, 4, new byte[] { 0x12, 0x34, 0x56, 0x78 });
@@ -26,18 +29,22 @@ Console.WriteLine($"Value: {string.Join(", ", tlvRecord.Value)}");
 ## TLV Operations
 
 ### ParseTlvRecord
+
 Parses a single TLV record from a byte array at the specified position.
 
 #### Syntax
+
 ```csharp
 public static TlvRecord ParseTlvRecord(this byte[] array, ref int position)
 ```
 
 #### Parameters
+
 - `array`: The byte array containing TLV data
 - `position`: The position to start parsing from (advanced by record size)
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x04, 0x00, 0x12, 0x34, 0x56, 0x78 };
 var position = 0;
@@ -48,14 +55,17 @@ Console.WriteLine($"Parsed TLV: Type=0x{tlv.Type:X2}, Length={tlv.Length}");
 ```
 
 ### ParseAllTlvRecords
+
 Parses all TLV records from a byte array.
 
 #### Syntax
+
 ```csharp
 public static IEnumerable<TlvRecord> ParseAllTlvRecords(this byte[] array)
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] {
     0x01, 0x02, 0x00, 0x12, 0x34,           // First TLV
@@ -72,14 +82,17 @@ foreach (var tlv in allTlvs)
 ```
 
 ### CreateTlvRecord
+
 Creates a TLV record as a byte array from type and value.
 
 #### Syntax
+
 ```csharp
 public static byte[] CreateTlvRecord(byte type, byte[] value)
 ```
 
 #### Example
+
 ```csharp
 var value = new byte[] { 0x12, 0x34, 0x56, 0x78 };
 var tlvBytes = ByteArrayProtocolExtensions.CreateTlvRecord(0x01, value);
@@ -93,6 +106,7 @@ Console.WriteLine($"TLV bytes: {string.Join(" ", tlvBytes.Select(b => $"0x{b:X2}
 ### Simple Framing
 
 #### AddSimpleFrame
+
 Adds start and end marker bytes around data.
 
 ```csharp
@@ -100,6 +114,7 @@ public static byte[] AddSimpleFrame(this byte[] data, byte startMarker = 0x7E, b
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x02, 0x03 };
 var framed = data.AddSimpleFrame();
@@ -113,6 +128,7 @@ var customFramed = data.AddSimpleFrame(0xAA, 0xBB);
 ```
 
 #### RemoveSimpleFrame
+
 Removes frame markers from data.
 
 ```csharp
@@ -120,6 +136,7 @@ public static byte[] RemoveSimpleFrame(this byte[] framedData, byte startMarker 
 ```
 
 #### Example
+
 ```csharp
 var framedData = new byte[] { 0x7E, 0x01, 0x02, 0x03, 0x7E };
 var unframed = framedData.RemoveSimpleFrame();
@@ -131,6 +148,7 @@ Console.WriteLine($"Unframed: {string.Join(" ", unframed.Select(b => $"0x{b:X2}"
 ### Length-Prefixed Framing
 
 #### AddLengthPrefixedFrame
+
 Prefixes data with a 2-byte length field.
 
 ```csharp
@@ -138,6 +156,7 @@ public static byte[] AddLengthPrefixedFrame(this byte[] data)
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x02, 0x03, 0x04 };
 var framed = data.AddLengthPrefixedFrame();
@@ -147,6 +166,7 @@ Console.WriteLine($"Length-prefixed: {string.Join(" ", framed.Select(b => $"0x{b
 ```
 
 #### RemoveLengthPrefixedFrame
+
 Removes the length prefix and validates frame integrity.
 
 ```csharp
@@ -154,6 +174,7 @@ public static byte[] RemoveLengthPrefixedFrame(this byte[] framedData)
 ```
 
 #### Example
+
 ```csharp
 var framedData = new byte[] { 0x04, 0x00, 0x01, 0x02, 0x03, 0x04 };
 var unframed = framedData.RemoveLengthPrefixedFrame();
@@ -165,6 +186,7 @@ Console.WriteLine($"Unframed: {string.Join(" ", unframed.Select(b => $"0x{b:X2}"
 ## Checksum Operations
 
 ### Simple Checksum
+
 Calculates an 8-bit checksum by summing all bytes.
 
 ```csharp
@@ -172,6 +194,7 @@ public static byte CalculateSimpleChecksum(this byte[] data)
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x02, 0x03, 0x04 };
 var checksum = data.CalculateSimpleChecksum();
@@ -181,6 +204,7 @@ Console.WriteLine($"Simple checksum: 0x{checksum:X2}");
 ```
 
 ### XOR Checksum
+
 Calculates a checksum by XORing all bytes.
 
 ```csharp
@@ -188,6 +212,7 @@ public static byte CalculateXorChecksum(this byte[] data)
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x02, 0x03, 0x04 };
 var checksum = data.CalculateXorChecksum();
@@ -199,6 +224,7 @@ Console.WriteLine($"XOR checksum: 0x{checksum:X2}");
 ### Checksum Validation and Appending
 
 #### AppendChecksum
+
 Appends a checksum to data using a specified checksum function.
 
 ```csharp
@@ -206,6 +232,7 @@ public static byte[] AppendChecksum(this byte[] data, Func<byte[], byte> checksu
 ```
 
 #### ValidateChecksum
+
 Validates data against its trailing checksum.
 
 ```csharp
@@ -213,6 +240,7 @@ public static bool ValidateChecksum(this byte[] dataWithChecksum, Func<byte[], b
 ```
 
 #### Example
+
 ```csharp
 var data = new byte[] { 0x01, 0x02, 0x03, 0x04 };
 
@@ -233,6 +261,7 @@ Console.WriteLine($"Corrupted checksum valid: {isValid}"); // False
 ## Protocol Implementation Example
 
 ### Complete Protocol Handler
+
 ```csharp
 public class SimpleProtocolHandler
 {
@@ -282,21 +311,25 @@ var (type, payload) = handler.ParseMessage(message);
 ## Performance Characteristics
 
 ### TLV Operations
+
 - **ParseTlvRecord**: O(1) for individual record parsing
 - **ParseAllTlvRecords**: O(n) where n is the total data size
 - **CreateTlvRecord**: O(m) where m is the value size
 
 ### Frame Operations
+
 - **Simple Framing**: O(n) where n is data size (requires array copy)
 - **Length-Prefixed**: O(n) where n is data size (requires array copy)
 
 ### Checksum Operations
+
 - **Simple Checksum**: O(n) where n is data size
 - **XOR Checksum**: O(n) where n is data size
 
 ## Best Practices
 
 ### TLV Usage
+
 ```csharp
 // Use structured approach for multiple TLVs
 var tlvs = new List<TlvRecord>
@@ -316,6 +349,7 @@ var serialized = builder.ToByteArray();
 ```
 
 ### Frame Selection
+
 ```csharp
 // Use simple framing for protocols with unique delimiters
 var simpleFramed = data.AddSimpleFrame(0x7E, 0x7E);
@@ -328,6 +362,7 @@ var robust = data.AddLengthPrefixedFrame().AddSimpleFrame(0xAA, 0xBB);
 ```
 
 ### Error Handling
+
 ```csharp
 try
 {

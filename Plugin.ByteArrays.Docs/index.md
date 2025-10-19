@@ -152,6 +152,7 @@ Advanced analysis and formatting:
 ### 📋 API Reference
 
 #### Core Extensions
+
 | Class | Description |
 |-------|-------------|
 | [ByteArrayExtensions](ByteArrayExtensions.md) | Core utilities, pattern matching, and array comparison |
@@ -166,6 +167,7 @@ Advanced analysis and formatting:
 | [ByteArrayExtensions.GuidConversion](ByteArrayExtensions.GuidConversion.md) | GUID conversion utilities |
 
 #### Specialized Classes
+
 | Class | Description |
 |-------|-------------|
 | [ByteArrayBuilder](ByteArrayBuilder.md) | Fluent builder for constructing byte arrays from various types |
@@ -176,13 +178,15 @@ Advanced analysis and formatting:
 | [ObjectToByteArrayExtensions](ObjectToByteArrayExtensions.md) | Type-safe object-to-byte-array conversions and JSON serialization |
 
 #### Modern Memory Types (NEW! ✨)
+
 | Class | Description |
 |-------|-------------|
-| [ReadOnlySpanExtensions](ReadOnlySpanExtensions.md) | Zero-allocation, high-performance operations for ReadOnlySpan<byte> |
-| [ReadOnlyMemoryExtensions](ReadOnlyMemoryExtensions.md) | Memory-safe operations for ReadOnlyMemory<byte> with async support |
+| [ReadOnlySpanExtensions](ReadOnlySpanExtensions.md) | Zero-allocation, high-performance operations for ReadOnlySpan\<byte\> |
+| [ReadOnlyMemoryExtensions](ReadOnlyMemoryExtensions.md) | Memory-safe operations for ReadOnlyMemory\<byte\> with async support |
 | [ReadOnlySpanUtilities](ReadOnlySpanUtilities.md) | Analysis, entropy calculation, and transformation utilities for spans |
 
-**ReadOnlySpan<byte> Partial Classes:**
+**ReadOnlySpan\<byte\> Partial Classes:**
+
 | Class | Description |
 |-------|-------------|
 | ReadOnlySpanExtensions.PrimitiveTypeConversion | Boolean, byte, char, and sbyte conversions |

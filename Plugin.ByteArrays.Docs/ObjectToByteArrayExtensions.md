@@ -5,6 +5,7 @@ The `ObjectToByteArrayExtensions` class provides comprehensive extensions for co
 ## IByteSerializable Interface
 
 ### Interface Definition
+
 ```csharp
 public interface IByteSerializable
 {
@@ -14,6 +15,7 @@ public interface IByteSerializable
 ```
 
 ### Example Implementation
+
 ```csharp
 public class CustomData : IByteSerializable
 {
@@ -47,14 +49,17 @@ restored.FromBytes(bytes);
 ## String Conversion Methods
 
 ### AsciiStringToByteArray
+
 Converts an ASCII string to a byte array.
 
 #### Syntax
+
 ```csharp
 public static byte[] AsciiStringToByteArray(this string value)
 ```
 
 #### Example
+
 ```csharp
 var text = "Hello World";
 var asciiBytes = text.AsciiStringToByteArray();
@@ -71,14 +76,17 @@ var emptyBytes2 = emptyString.AsciiStringToByteArray(); // Returns empty array
 ```
 
 ### Utf8StringToByteArray
+
 Converts a UTF-8 string to a byte array.
 
 #### Syntax
+
 ```csharp
 public static byte[] Utf8StringToByteArray(this string value)
 ```
 
 #### Example
+
 ```csharp
 var text = "Hello 世界"; // Mixed ASCII and Unicode
 var utf8Bytes = text.Utf8StringToByteArray();
@@ -94,14 +102,17 @@ Console.WriteLine($"ASCII and UTF-8 identical: {asciiBytes.SequenceEqual(utf8Byt
 ```
 
 ### HexStringToByteArray
+
 Converts a hexadecimal string to a byte array with flexible input format support.
 
 #### Syntax
+
 ```csharp
 public static byte[] HexStringToByteArray(this string hexString)
 ```
 
 #### Example
+
 ```csharp
 // Various hex string formats
 var formats = new[]
@@ -132,14 +143,17 @@ catch (ArgumentException ex)
 ```
 
 ### Base64StringToByteArray
+
 Converts a Base64 string to a byte array.
 
 #### Syntax
+
 ```csharp
 public static byte[] Base64StringToByteArray(this string base64String)
 ```
 
 #### Example
+
 ```csharp
 var originalData = "Hello World"u8.ToArray();
 var base64 = Convert.ToBase64String(originalData);
@@ -156,14 +170,17 @@ Console.WriteLine($"Round-trip successful: {originalData.SequenceEqual(decodedBy
 ## Generic Type Conversion
 
 ### ToByteArray<T>
+
 Converts any supported type to a byte array using the ByteArrayBuilder.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToByteArray<T>(this T value)
 ```
 
 #### Example
+
 ```csharp
 // Primitive types
 var intBytes = 42.ToByteArray();
@@ -191,14 +208,17 @@ Console.WriteLine($"DateTime bytes: {dateBytes.Length}"); // 8
 ## JSON Serialization
 
 ### ToJsonByteArray
+
 Serializes an object to JSON as a byte array using System.Text.Json.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToJsonByteArray<T>(this T value, JsonSerializerOptions? options = null)
 ```
 
 #### Example
+
 ```csharp
 var person = new { Name = "John", Age = 30, Active = true };
 var jsonBytes = person.ToJsonByteArray();
@@ -220,14 +240,17 @@ Console.WriteLine(formattedJson);
 ```
 
 ### FromJsonByteArray
+
 Deserializes a JSON byte array back to an object.
 
 #### Syntax
+
 ```csharp
 public static T? FromJsonByteArray<T>(this byte[] jsonBytes, JsonSerializerOptions? options = null)
 ```
 
 #### Example
+
 ```csharp
 public record Person(string Name, int Age, bool Active);
 
@@ -252,14 +275,17 @@ catch (JsonException ex)
 ```
 
 ### ToJsonMemory
+
 Creates a ReadOnlyMemory<byte> containing JSON data for span-based operations.
 
 #### Syntax
+
 ```csharp
 public static ReadOnlyMemory<byte> ToJsonMemory<T>(this T value, JsonSerializerOptions? options = null)
 ```
 
 #### Example
+
 ```csharp
 var data = new { Values = new[] { 1, 2, 3 }, Name = "Test" };
 var jsonMemory = data.ToJsonMemory();
@@ -280,14 +306,17 @@ stream.Write(jsonSpan);
 ## Collection Serialization
 
 ### Collection ToByteArray
+
 Serializes collections with length-prefixed items.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToByteArray<T>(this IEnumerable<T> collection, Func<T, byte[]> itemSerializer)
 ```
 
 #### Example
+
 ```csharp
 var numbers = new[] { 42, 123, 456 };
 
@@ -311,14 +340,17 @@ var serializedPeople = people.ToByteArray(p => p.ToJsonByteArray());
 ```
 
 ### FromByteArrayToList
+
 Deserializes a byte array back to a list of objects.
 
 #### Syntax
+
 ```csharp
 public static IList<T> FromByteArrayToList<T>(this byte[] data, Func<byte[], T> itemDeserializer)
 ```
 
 #### Example
+
 ```csharp
 // Deserialize numbers
 var originalNumbers = new[] { 42, 123, 456 };
@@ -338,9 +370,11 @@ Console.WriteLine($"Strings equal: {originalStrings.SequenceEqual(stringsRestore
 ```
 
 ### Dictionary Serialization
+
 Serializes dictionaries with key-value pairs.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToByteArray<TKey, TValue>(
     this IDictionary<TKey, TValue> dictionary,
@@ -349,6 +383,7 @@ public static byte[] ToByteArray<TKey, TValue>(
 ```
 
 #### Example
+
 ```csharp
 var settings = new Dictionary<string, object>
 {
@@ -382,15 +417,18 @@ var scoresSerialized = scores.ToByteArray(
 ## Span and Memory Operations
 
 ### ReadOnlySpan ToByteArray
+
 Converts a span to a byte array.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToByteArray(this ReadOnlySpan<byte> span)
 public static byte[] ToByteArray(this ReadOnlyMemory<byte> memory)
 ```
 
 #### Example
+
 ```csharp
 var originalArray = new byte[] { 1, 2, 3, 4, 5 };
 
@@ -407,14 +445,17 @@ Console.WriteLine($"Memory: [{string.Join(", ", memoryArray)}]");
 ```
 
 ### TryWriteToSpan
+
 Writes an object to a span using a custom serializer.
 
 #### Syntax
+
 ```csharp
 public static int TryWriteToSpan<T>(this T value, Span<byte> destination, Func<T, Span<byte>, int> serializer)
 ```
 
 #### Example
+
 ```csharp
 // Custom serializer for a point structure
 static int SerializePoint((int X, int Y) point, Span<byte> dest)
@@ -435,9 +476,11 @@ Console.WriteLine($"Buffer: {string.Join(" ", buffer.Take(bytesWritten).Select(b
 ```
 
 ### ArrayPool Integration
+
 Efficient memory management using ArrayPool.
 
 #### Syntax
+
 ```csharp
 public static (byte[] buffer, int length) ToRentedBuffer<T>(
     this T value,
@@ -448,6 +491,7 @@ public static void ReturnRentedBuffer(byte[] buffer, bool clearArray = false)
 ```
 
 #### Example
+
 ```csharp
 var largeObject = new { Data = Enumerable.Range(0, 1000).ToArray() };
 
@@ -479,9 +523,11 @@ static void ProcessSerializedData(ReadOnlySpan<byte> data)
 ## Custom Serialization Support
 
 ### IByteSerializable ToByteArray
+
 Serializes objects implementing IByteSerializable.
 
 #### Example
+
 ```csharp
 public class NetworkPacket : IByteSerializable
 {
@@ -522,14 +568,17 @@ var bytes = packet.ToByteArray(); // Uses IByteSerializable implementation
 ```
 
 ### Custom Serializer Function
+
 Use custom serialization logic.
 
 #### Syntax
+
 ```csharp
 public static byte[] ToByteArray<T>(this T value, Func<T, byte[]> customSerializer)
 ```
 
 #### Example
+
 ```csharp
 // Custom serializer for DateTime as Unix timestamp
 static byte[] SerializeDateTimeAsUnix(DateTime dt)
@@ -548,15 +597,18 @@ Console.WriteLine($"Default DateTime serialization: {defaultBytes.Length} bytes"
 ```
 
 ### Cached Serializer
+
 Creates a caching serializer for expensive operations.
 
 #### Syntax
+
 ```csharp
 public static Func<T, byte[]> CreateCachedSerializer<T>(Func<T, byte[]> baseSerializer, int maxCacheSize = 100)
     where T : notnull
 ```
 
 #### Example
+
 ```csharp
 // Expensive serialization function (simulated)
 static byte[] ExpensiveSerializer(ComplexObject obj)
@@ -586,6 +638,7 @@ Console.WriteLine($"Cached serialization took: {stopwatch.ElapsedMilliseconds}ms
 ## Advanced Usage Patterns
 
 ### Polymorphic Serialization
+
 ```csharp
 public abstract class Shape : IByteSerializable
 {
@@ -627,6 +680,7 @@ public class Circle : Shape
 ```
 
 ### Versioned Serialization
+
 ```csharp
 public class VersionedData : IByteSerializable
 {
@@ -667,12 +721,14 @@ public class VersionedData : IByteSerializable
 ## Performance Characteristics
 
 ### Time Complexity
+
 - **String conversions**: O(n) where n is string length
 - **JSON serialization**: O(n) where n is object complexity
 - **Collection serialization**: O(k×m) where k is item count and m is average item size
 - **Cached serialization**: O(1) for cache hits, O(n) for cache misses
 
 ### Memory Efficiency
+
 - **Span operations**: Zero-copy when possible
 - **ArrayPool integration**: Reduces garbage collection pressure
 - **Streaming serialization**: Constant memory usage for large data
@@ -680,6 +736,7 @@ public class VersionedData : IByteSerializable
 ## Best Practices
 
 ### Choose Appropriate Serialization
+
 ```csharp
 // For interoperability: JSON
 var jsonBytes = obj.ToJsonByteArray();
@@ -692,6 +749,7 @@ var nativeBytes = obj.ToByteArray(); // Uses ByteArrayBuilder
 ```
 
 ### Error Handling
+
 ```csharp
 try
 {
@@ -711,6 +769,7 @@ catch (ArgumentException ex)
 ```
 
 ### Memory Management
+
 ```csharp
 // Use ArrayPool for large operations
 var (buffer, length) = largeData.ToRentedBuffer(serialize, 8192);

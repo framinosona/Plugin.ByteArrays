@@ -5,6 +5,7 @@
 The `ReadOnlySpanExtensions` class provides comprehensive extension methods for working with `ReadOnlySpan<byte>`, enabling zero-allocation, high-performance operations for reading and manipulating byte data. This class is designed as a modern, performance-optimized alternative to traditional byte array operations, leveraging the power of `Span<T>` APIs introduced in .NET Core.
 
 ### Purpose
+
 - **Zero-allocation operations**: All methods work directly on memory without creating intermediate arrays
 - **High performance**: Optimized for speed-critical applications using modern Span APIs
 - **Type-safe conversions**: Convert byte sequences to various .NET types with compile-time safety
@@ -12,7 +13,9 @@ The `ReadOnlySpanExtensions` class provides comprehensive extension methods for 
 - **Safe variants**: OrDefault methods that never throw exceptions
 
 ### Capabilities
+
 This class provides over 100 extension methods organized into the following categories:
+
 - Core utilities (pattern matching, comparison, debugging)
 - Primitive type conversions (bool, byte, char, sbyte)
 - Integer conversions (all signed/unsigned variants)
@@ -24,7 +27,9 @@ This class provides over 100 extension methods organized into the following cate
 - Network conversions (IP addresses, network byte order)
 
 ### Architectural Role
+
 `ReadOnlySpanExtensions` serves as the primary interface for type-safe, performant byte data reading in modern .NET applications. It complements the existing `ByteArrayExtensions` class by providing:
+
 - Stack-allocated processing for small buffers
 - Direct memory access without heap allocations
 - Integration with high-performance networking and I/O operations
@@ -35,41 +40,51 @@ This class provides over 100 extension methods organized into the following cate
 ### Core Utilities
 
 #### ToDebugString
+
 ```csharp
 public static string ToDebugString(this ReadOnlySpan<byte> span)
 ```
-Converts the ReadOnlySpan<byte> into a readable string for debugging purposes. Each byte is represented as a decimal value, separated by commas.
+
+Converts the `ReadOnlySpan<byte>` into a readable string for debugging purposes. Each byte is represented as a decimal value, separated by commas.
 
 **Parameters:**
-- `span` - The ReadOnlySpan<byte> to process
+
+- `span` - The `ReadOnlySpan<byte>` to process
 
 **Returns:** A string representing the span as comma-separated decimal numbers
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2, 3, 255 };
 string debug = span.ToDebugString(); // Returns: "[1,2,3,255]"
 ```
 
 #### ToHexDebugString
+
 ```csharp
 public static string ToHexDebugString(this ReadOnlySpan<byte> span)
 ```
-Converts the ReadOnlySpan<byte> to its hexadecimal string representation for debugging.
+
+Converts the `ReadOnlySpan<byte>` to its hexadecimal string representation for debugging.
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2, 15, 255 };
 string hex = span.ToHexDebugString(); // Returns: "[01,02,0F,FF]"
 ```
 
 #### StartsWith
+
 ```csharp
 public static bool StartsWith(this ReadOnlySpan<byte> span, ReadOnlySpan<byte> pattern)
 ```
-Checks if a ReadOnlySpan<byte> starts with a specific pattern.
+
+Checks if a `ReadOnlySpan<byte>` starts with a specific pattern.
 
 **Parameters:**
+
 - `span` - The span to check
 - `pattern` - The pattern to look for
 
@@ -78,6 +93,7 @@ Checks if a ReadOnlySpan<byte> starts with a specific pattern.
 **Performance:** O(n) where n is the pattern length
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2, 3, 4, 5 };
 ReadOnlySpan<byte> pattern = new byte[] { 1, 2, 3 };
@@ -85,12 +101,15 @@ bool starts = span.StartsWith(pattern); // Returns: true
 ```
 
 #### EndsWith
+
 ```csharp
 public static bool EndsWith(this ReadOnlySpan<byte> span, ReadOnlySpan<byte> pattern)
 ```
-Determines whether the ReadOnlySpan<byte> ends with the specified pattern.
+
+Determines whether the `ReadOnlySpan<byte>` ends with the specified pattern.
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2, 3, 4, 5 };
 ReadOnlySpan<byte> pattern = new byte[] { 3, 4, 5 };
@@ -98,16 +117,19 @@ bool ends = span.EndsWith(pattern); // Returns: true
 ```
 
 #### IndexOf
+
 ```csharp
 public static int IndexOf(this ReadOnlySpan<byte> span, ReadOnlySpan<byte> pattern)
 ```
-Finds the first occurrence of a pattern in a ReadOnlySpan<byte>.
+
+Finds the first occurrence of a pattern in a `ReadOnlySpan<byte>`.
 
 **Returns:** The index of the first occurrence, or -1 if not found
 
 **Performance:** O(n*m) where n is span length and m is pattern length
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2, 3, 4, 5 };
 ReadOnlySpan<byte> pattern = new byte[] { 3, 4 };
@@ -115,14 +137,17 @@ int index = span.IndexOf(pattern); // Returns: 2
 ```
 
 #### IsIdenticalTo
+
 ```csharp
 public static bool IsIdenticalTo(this ReadOnlySpan<byte> span1, ReadOnlySpan<byte> span2)
 ```
-Checks if two ReadOnlySpan<byte> instances are identical in content and length.
+
+Checks if two `ReadOnlySpan<byte>` instances are identical in content and length.
 
 **Performance:** O(n) using optimized SequenceEqual
 
 **Example:**
+
 ```csharp
 ReadOnlySpan<byte> span1 = new byte[] { 1, 2, 3 };
 ReadOnlySpan<byte> span2 = new byte[] { 1, 2, 3 };
@@ -143,8 +168,9 @@ This pattern is maintained across all type conversions for consistency and ease 
 ## Practical Examples
 
 ### Sequential Reading Pattern
+
 ```csharp
-var data = new byte[] { 
+var data = new byte[] {
     1,                        // bool
     42,                       // byte
     0x12, 0x34,              // int16
@@ -160,6 +186,7 @@ int total = span.ToInt32(ref position);       // position advances to 8
 ```
 
 ### Error-Safe Reading
+
 ```csharp
 ReadOnlySpan<byte> span = new byte[] { 1, 2 }; // Only 2 bytes
 var position = 0;
@@ -173,6 +200,7 @@ int value = span.ToInt32OrDefault(ref position, -1); // Returns: -1
 ```
 
 ### String Operations
+
 ```csharp
 ReadOnlySpan<byte> span = Encoding.UTF8.GetBytes("Hello, World! 🌍");
 
@@ -194,6 +222,7 @@ string base64 = data.ToBase64String();
 ## Advanced Usage Patterns
 
 ### Network Protocol Parsing
+
 ```csharp
 // Parse network packet with mixed data types
 byte[] packet = GetNetworkPacket();
@@ -211,6 +240,7 @@ var message = messageBytes.ToUtf8String();
 ```
 
 ### Configuration File Parsing
+
 ```csharp
 ReadOnlySpan<byte> configData = File.ReadAllBytes("config.bin");
 var position = 0;
@@ -231,6 +261,7 @@ var features = configData.ToEnum<FeatureFlags>(ref position);
 ```
 
 ### Zero-Copy Buffer Processing
+
 ```csharp
 // Process large buffer without allocations
 Memory<byte> largeBuffer = GetLargeDataBuffer();
@@ -245,7 +276,7 @@ while (index >= 0)
     // Process line without allocation
     var line = span[..index];
     ProcessLine(line);
-    
+
     span = span[(index + delimiter.Length)..];
     index = span.IndexOf(delimiter);
 }
@@ -254,23 +285,27 @@ while (index >= 0)
 ## Performance Characteristics
 
 ### Time Complexity
+
 - **Pattern matching** (StartsWith, EndsWith): O(n) where n is pattern length
 - **IndexOf**: O(n*m) where n is span length, m is pattern length
 - **Type conversions**: O(1) - constant time for all fixed-size types
 - **String conversions**: O(n) where n is the number of bytes to convert
 
 ### Memory Usage
+
 - **Zero heap allocations** for all read operations
 - **Stack-only** processing for small spans (<= 512 bytes typical)
 - **No intermediate arrays** created during conversions
 - **Shared memory** - operates directly on existing buffers
 
 ### Scalability
+
 - **Constant performance** regardless of source buffer size (when using Slice)
 - **Thread-safe** for read operations (ReadOnlySpan is immutable)
 - **Cache-friendly** sequential access patterns
 
 ### Optimization Notes
+
 - Use `ref position` parameters for sequential reading to minimize overhead
 - Prefer `OrDefault` methods in hot paths to avoid exception overhead
 - Slice large spans before passing to methods to improve locality
@@ -279,6 +314,7 @@ while (index >= 0)
 ## Best Practices
 
 ### Position Management
+
 ```csharp
 // DO: Use ref position for sequential reading
 var position = 0;
@@ -293,6 +329,7 @@ position += 4;
 ```
 
 ### Error Handling
+
 ```csharp
 // DO: Use OrDefault for potentially invalid data
 var config = untrustedData.ToInt32OrDefault(ref pos, DEFAULT_CONFIG);
@@ -306,6 +343,7 @@ try {
 ```
 
 ### Memory Efficiency
+
 ```csharp
 // DO: Slice before processing
 var relevantData = largeSpan.Slice(offset, length);
@@ -316,6 +354,7 @@ ProcessData(largeSpan, offset, length);
 ```
 
 ### Common Pitfalls
+
 1. **Capturing spans in lambdas**: ReadOnlySpan cannot be used in async methods or captured by lambdas
 2. **Storing spans**: Spans are stack-only types; use ReadOnlyMemory for storage
 3. **Position validation**: Always verify sufficient data exists before reading
@@ -324,12 +363,14 @@ ProcessData(largeSpan, offset, length);
 ## Cross-References
 
 ### Related Components
+
 - [ReadOnlyMemoryExtensions](ReadOnlyMemoryExtensions.md) - Memory-based operations
 - [ReadOnlySpanUtilities](ReadOnlySpanUtilities.md) - Analysis and utility operations
 - [ByteArrayExtensions](ByteArrayExtensions.md) - Traditional byte array operations
 - [ByteArrayBuilder](ByteArrayBuilder.md) - Building byte arrays
 
 ### See Also
+
 - [Primitive Type Conversions](ReadOnlySpanExtensions.PrimitiveTypeConversion.md)
 - [Integer Conversions](ReadOnlySpanExtensions.IntegerConversion.md)
 - [String Conversions](ReadOnlySpanExtensions.StringConversion.md)
