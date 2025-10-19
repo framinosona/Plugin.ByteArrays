@@ -37,6 +37,36 @@ byte[] slice = data.SafeSlice(1, 3);
 byte[] trimmed = data.TrimEndNonDestructive();
 ```
 
+### Modern High-Performance Usage (NEW! ✨)
+
+```csharp
+using Plugin.ByteArrays;
+
+// Zero-allocation operations with ReadOnlySpan<byte>
+ReadOnlySpan<byte> span = stackalloc byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+var position = 0;
+
+// Read values without heap allocations
+bool flag = span.ToBoolean(ref position);
+int number = span.ToInt32(ref position);
+float value = span.ToSingle(ref position);
+
+// Pattern matching
+ReadOnlySpan<byte> pattern = new byte[] { 3, 4, 5 };
+bool contains = span.IndexOf(pattern) >= 0;
+
+// Analysis utilities
+double entropy = span.CalculateEntropy();
+bool allZeros = span.IsAllZeros();
+
+// Async-compatible with ReadOnlyMemory<byte>
+async Task ProcessDataAsync(ReadOnlyMemory<byte> memory)
+{
+    await Task.Delay(100);
+    var value = memory.Span.ToInt32(); // Convert to span for operations
+}
+```
+
 ---
 
 ## 📚 Core Features
@@ -144,6 +174,25 @@ Advanced analysis and formatting:
 | [ByteArrayProtocolExtensions](ByteArrayProtocolExtensions.md) | Protocol parsing including TLV structures, framing, and checksums |
 | [ByteArrayUtilities](ByteArrayUtilities.md) | Analysis, formatting, and performance measurement tools |
 | [ObjectToByteArrayExtensions](ObjectToByteArrayExtensions.md) | Type-safe object-to-byte-array conversions and JSON serialization |
+
+#### Modern Memory Types (NEW! ✨)
+| Class | Description |
+|-------|-------------|
+| [ReadOnlySpanExtensions](ReadOnlySpanExtensions.md) | Zero-allocation, high-performance operations for ReadOnlySpan<byte> |
+| [ReadOnlyMemoryExtensions](ReadOnlyMemoryExtensions.md) | Memory-safe operations for ReadOnlyMemory<byte> with async support |
+| [ReadOnlySpanUtilities](ReadOnlySpanUtilities.md) | Analysis, entropy calculation, and transformation utilities for spans |
+
+**ReadOnlySpan<byte> Partial Classes:**
+| Class | Description |
+|-------|-------------|
+| ReadOnlySpanExtensions.PrimitiveTypeConversion | Boolean, byte, char, and sbyte conversions |
+| ReadOnlySpanExtensions.IntegerConversion | All integer type conversions (Int16/32/64, UInt16/32/64) |
+| ReadOnlySpanExtensions.FloatingPointConversion | Float, double, Half, and decimal conversions |
+| ReadOnlySpanExtensions.StringConversion | UTF-8, ASCII, hex, and Base64 string operations |
+| ReadOnlySpanExtensions.DateTimeConversion | DateTime, TimeSpan, and DateTimeOffset conversions |
+| ReadOnlySpanExtensions.GuidConversion | GUID conversion utilities |
+| ReadOnlySpanExtensions.ComplexTypeConversion | Enum and Version object conversions |
+| ReadOnlySpanExtensions.NetworkConversion | IPv4/IPv6 addresses and network byte order |
 
 ---
 
