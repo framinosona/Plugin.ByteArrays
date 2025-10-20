@@ -2,7 +2,6 @@
 
   <!-- ==================== VARIABLES ==================== -->
   <PropertyGroup>
-    <Project_Url>git@github.com:framinosona/Plugin.ByteArrays.git</Project_Url>
     <Project_Name>Plugin.ByteArrays</Project_Name>
     <Project_Tags>Plugin;ByteArrays;Tools;Toolkit</Project_Tags>
     <Project_Copyright>Francois Raminosona</Project_Copyright>
