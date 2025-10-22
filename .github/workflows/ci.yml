@@ -36,7 +36,7 @@ defaults:
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: '1'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: '1'
-  PROJECT_NAME: Plugin.ByteArray
+  PROJECT_NAME: Plugin.ByteArrays
 
 jobs:
   version:
