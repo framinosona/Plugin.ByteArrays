@@ -16,14 +16,15 @@ body:
       label: Feature Type
       description: What type of feature is this?
       options:
-        - "New ByteArrayExtensions method"
-        - "New ByteArrayBuilder functionality"
+        - "New API method/functionality"
         - "Performance optimization"
-        - "New data type conversion"
-        - "Array manipulation method"
-        - "Encoding/format support"
+        - "New data type support"
+        - "Error handling improvement"
+        - "Configuration option"
+        - "Integration support"
         - "API improvement"
         - "Documentation enhancement"
+        - "Developer experience"
         - "Other"
     validations:
       required: true
@@ -72,13 +73,13 @@ body:
       description: Show how this feature would be used in code
       placeholder: |
         ```csharp
-        using Plugin.ByteArrays;
+        using YourNamespace;
 
         // Example of how the new feature would be used
-        byte[] data = { 0x01, 0x02, 0x03, 0x04 };
+        var input = GetSampleInput();
 
         // Your proposed API usage here
-        var result = data.YourNewMethod();
+        var result = input.YourNewMethod();
 
         // Expected behavior
         Console.WriteLine($"Result: {result}");

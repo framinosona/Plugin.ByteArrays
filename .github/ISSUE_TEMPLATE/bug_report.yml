@@ -26,11 +26,11 @@ body:
       description: Provide minimal code that reproduces the issue
       placeholder: |
         ```csharp
-        using Plugin.ByteArrays;
+        using YourNamespace;
 
         // Minimal code that demonstrates the bug
-        byte[] data = { 0x01, 0x02, 0x03 };
-        var result = data.SomeMethod(); // This causes the issue
+        var input = "example input";
+        var result = input.SomeMethod(); // This causes the issue
         ```
       render: csharp
     validations:
