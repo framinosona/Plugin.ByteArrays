@@ -182,4 +182,68 @@ public static partial class ReadOnlySpanExtensions
     }
 
     #endregion
+
+    #region Unix Timestamp Conversions
+
+    /// <summary>
+    ///     Converts the ReadOnlySpan&lt;byte&gt; into a DateTime from Unix timestamp (seconds since epoch).
+    ///     Size = 4 bytes.
+    /// </summary>
+    /// <param name="span">The ReadOnlySpan&lt;byte&gt;.</param>
+    /// <param name="position">The position within the span. By reference; is auto-incremented by the size of the output type.</param>
+    /// <returns>Converted DateTime value.</returns>
+    public static DateTime ToDateTimeFromUnixTimestamp(this ReadOnlySpan<byte> span, ref int position)
+    {
+        return ExecuteConversionToType(span, ref position, sizeof(int), s =>
+        {
+            var timestamp = BitConverter.ToInt32(s);
+            return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+        });
+    }
+
+    /// <summary>
+    ///     Converts the ReadOnlySpan&lt;byte&gt; into a DateTime from Unix timestamp (seconds since epoch).
+    ///     Size = 4 bytes.
+    /// </summary>
+    /// <param name="span">The ReadOnlySpan&lt;byte&gt;.</param>
+    /// <param name="position">The position within the span.</param>
+    /// <returns>Converted DateTime value.</returns>
+    public static DateTime ToDateTimeFromUnixTimestamp(this ReadOnlySpan<byte> span, int position = 0)
+    {
+        return ToDateTimeFromUnixTimestamp(span, ref position);
+    }
+
+    /// <summary>
+    ///     Converts the ReadOnlySpan&lt;byte&gt; into a DateTime from Unix timestamp (seconds since epoch).
+    ///     Returns the default value if conversion fails.
+    ///     Size = 4 bytes.
+    /// </summary>
+    /// <param name="span">The ReadOnlySpan&lt;byte&gt;.</param>
+    /// <param name="position">The position within the span. By reference; is auto-incremented by the size of the output type.</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted DateTime value.</returns>
+    public static DateTime ToDateTimeFromUnixTimestampOrDefault(this ReadOnlySpan<byte> span, ref int position, DateTime defaultValue = default)
+    {
+        return ExecuteConversionToTypeOrDefault(span, ref position, sizeof(int), s =>
+        {
+            var timestamp = BitConverter.ToInt32(s);
+            return DateTimeOffset.FromUnixTimeSeconds(timestamp).DateTime;
+        }, defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts the ReadOnlySpan&lt;byte&gt; into a DateTime from Unix timestamp (seconds since epoch).
+    ///     Returns the default value if conversion fails.
+    ///     Size = 4 bytes.
+    /// </summary>
+    /// <param name="span">The ReadOnlySpan&lt;byte&gt;.</param>
+    /// <param name="position">The position within the span.</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted DateTime value.</returns>
+    public static DateTime ToDateTimeFromUnixTimestampOrDefault(this ReadOnlySpan<byte> span, int position = 0, DateTime defaultValue = default)
+    {
+        return ToDateTimeFromUnixTimestampOrDefault(span, ref position, defaultValue);
+    }
+
+    #endregion
 }

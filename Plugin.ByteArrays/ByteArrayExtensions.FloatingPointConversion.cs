@@ -172,6 +172,74 @@ public static partial class ByteArrayExtensions
         return ToHalfOrDefault(array, ref position, defaultValue);
     }
 
+    /// <summary>
+    ///     Converts the byte array into a high-precision decimal number.
+    ///     Size = 16 bytes.
+    /// </summary>
+    /// <param name="array">The byte array.</param>
+    /// <param name="position">The position within the array. By reference: is auto-incremented by the size of the output type.</param>
+    /// <returns>Converted value.</returns>
+    public static decimal ToDecimal(this byte[] array, ref int position)
+    {
+        const int decimalSize = 16; // 4 int32s = 16 bytes
+        return ExecuteConversionToType(array, ref position, decimalSize, (bytes, offset) =>
+        {
+            var bits = new int[4];
+            for (var i = 0; i < 4; i++)
+            {
+                bits[i] = BitConverter.ToInt32(bytes, offset + (i * 4));
+            }
+            return new decimal(bits);
+        });
+    }
+
+    /// <summary>
+    ///     Converts the byte array into a high-precision decimal number.
+    ///     Size = 16 bytes.
+    /// </summary>
+    /// <param name="array">The byte array.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <returns>Converted value.</returns>
+    public static decimal ToDecimal(this byte[] array, int position = 0)
+    {
+        return ToDecimal(array, ref position);
+    }
+
+    /// <summary>
+    ///     Converts the byte array into a high-precision decimal number.
+    ///     Size = 16 bytes.
+    /// </summary>
+    /// <param name="array">The byte array.</param>
+    /// <param name="position">The position within the array. By reference: is auto-incremented by the size of the output type.</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static decimal ToDecimalOrDefault(this byte[] array, ref int position, decimal defaultValue = 0.0m)
+    {
+        const int decimalSize = 16; // 4 int32s = 16 bytes
+        return ExecuteConversionToTypeOrDefault(array, ref position, decimalSize, (bytes, offset) =>
+        {
+            var bits = new int[4];
+            for (var i = 0; i < 4; i++)
+            {
+                bits[i] = BitConverter.ToInt32(bytes, offset + (i * 4));
+            }
+            return new decimal(bits);
+        }, defaultValue);
+    }
+
+    /// <summary>
+    ///     Converts the byte array into a high-precision decimal number.
+    ///     Size = 16 bytes.
+    /// </summary>
+    /// <param name="array">The byte array.</param>
+    /// <param name="position">The position within the array.</param>
+    /// <param name="defaultValue">Default value for that type, can be overridden.</param>
+    /// <returns>Converted value.</returns>
+    public static decimal ToDecimalOrDefault(this byte[] array, int position = 0, decimal defaultValue = 0.0m)
+    {
+        return ToDecimalOrDefault(array, ref position, defaultValue);
+    }
+
     #endregion
 
 }
