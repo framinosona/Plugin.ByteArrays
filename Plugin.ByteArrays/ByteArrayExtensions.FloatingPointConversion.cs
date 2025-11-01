@@ -210,7 +210,7 @@ public static partial class ByteArrayExtensions
     ///     Size = 16 bytes.
     /// </summary>
     /// <param name="array">The byte array.</param>
-    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="position">The position within the array. By reference: is auto-incremented by the size of the output type.</param>
     /// <param name="defaultValue">Default value for that type, can be overriden.</param>
     /// <returns>Converted value.</returns>
     public static decimal ToDecimalOrDefault(this byte[] array, ref int position, decimal defaultValue = 0.0m)
