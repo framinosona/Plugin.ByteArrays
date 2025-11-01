@@ -155,4 +155,92 @@ public class ReadOnlySpanExtensions_StringConversionTests
         
         span.ToAsciiString(2, 3).Should().Be("CDE");
     }
+
+    [Fact]
+    public void ToUtf16String_Works()
+    {
+        var testString = "Hello World";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        var p = 0;
+        
+        span.ToUtf16String(ref p).Should().Be(testString);
+        p.Should().Be(bytes.Length);
+    }
+
+    [Fact]
+    public void ToUtf16String_NonRef_Overload_Works()
+    {
+        var testString = "Test 123";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        
+        span.ToUtf16String().Should().Be(testString);
+        span.ToUtf16String(0).Should().Be(testString);
+    }
+
+    [Fact]
+    public void ToUtf16String_WithNumberOfBytes_Works()
+    {
+        var testString = "ABCDEFGH";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        var p = 0;
+        
+        // Read only first 4 characters (8 bytes in UTF-16)
+        span.ToUtf16String(ref p, 8).Should().Be("ABCD");
+        p.Should().Be(8);
+    }
+
+    [Fact]
+    public void ToUtf16String_WithPosition_Works()
+    {
+        var testString = "ABCDEFGH";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        
+        // Skip first 2 characters (4 bytes) and read 3 characters (6 bytes)
+        span.ToUtf16String(4, 6).Should().Be("CDE");
+    }
+
+    [Fact]
+    public void ToUtf16String_EmptyString_Works()
+    {
+        var bytes = Encoding.Unicode.GetBytes("");
+        ReadOnlySpan<byte> span = bytes;
+        
+        span.ToUtf16String().Should().Be("");
+    }
+
+    [Fact]
+    public void ToUtf16StringOrDefault_Success_And_Failure()
+    {
+        var testString = "Test";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        var p = 0;
+        
+        // Success case
+        span.ToUtf16StringOrDefault(ref p).Should().Be(testString);
+        p.Should().Be(bytes.Length);
+        
+        // Failure case - position out of bounds
+        var empty = ReadOnlySpan<byte>.Empty;
+        p = 0;
+        empty.ToUtf16StringOrDefault(ref p, -1, "default").Should().Be("default");
+        p.Should().Be(0); // Position unchanged on failure
+        
+        // Non-ref overload
+        empty.ToUtf16StringOrDefault(0, -1, "fallback").Should().Be("fallback");
+    }
+
+    [Fact]
+    public void ToUtf16String_WithUnicodeCharacters_Works()
+    {
+        var testString = "Hello 世界 🌍";
+        var bytes = Encoding.Unicode.GetBytes(testString);
+        ReadOnlySpan<byte> span = bytes;
+        
+        span.ToUtf16String().Should().Be(testString);
+    }
 }

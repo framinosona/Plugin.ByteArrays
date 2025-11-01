@@ -274,4 +274,68 @@ public class ByteArrayExtensions_FloatingPointConversionTests
         empty.ToSingleOrDefault(0, 88.88f).Should().Be(88.88f);
         empty.ToHalfOrDefault(0, (Half)77.77).Should().Be((Half)77.77);
     }
+
+    [Fact]
+    public void ToDecimal_Works()
+    {
+        var value = 123.456789m;
+        var bits = decimal.GetBits(value);
+        var bytes = new byte[16];
+        Buffer.BlockCopy(bits, 0, bytes, 0, 16);
+        
+        var p = 0;
+        bytes.ToDecimal(ref p).Should().Be(value);
+        p.Should().Be(16);
+    }
+
+    [Fact]
+    public void ToDecimal_NonRef_Overload_Works()
+    {
+        var value = 987.654321m;
+        var bits = decimal.GetBits(value);
+        var bytes = new byte[16];
+        Buffer.BlockCopy(bits, 0, bytes, 0, 16);
+        
+        bytes.ToDecimal().Should().Be(value);
+        bytes.ToDecimal(0).Should().Be(value);
+    }
+
+    [Fact]
+    public void ToDecimalOrDefault_Success_And_Failure()
+    {
+        var value = 123456.789m;
+        var bits = decimal.GetBits(value);
+        var bytes = new byte[16];
+        Buffer.BlockCopy(bits, 0, bytes, 0, 16);
+        
+        var p = 0;
+
+        // Success case
+        bytes.ToDecimalOrDefault(ref p).Should().Be(value);
+        p.Should().Be(16);
+
+        // Failure case - position out of bounds
+        p = 0;
+        var empty = Array.Empty<byte>();
+        empty.ToDecimalOrDefault(ref p, 99.99m).Should().Be(99.99m);
+        p.Should().Be(0); // Position unchanged on failure
+
+        // Non-ref overload
+        empty.ToDecimalOrDefault(0, 123.45m).Should().Be(123.45m);
+    }
+
+    [Fact]
+    public void ToDecimal_WithDifferentValues()
+    {
+        var values = new[] { 0m, -1m, 1m, decimal.MaxValue, decimal.MinValue, 3.14159265358979323846m };
+        
+        foreach (var value in values)
+        {
+            var bits = decimal.GetBits(value);
+            var bytes = new byte[16];
+            Buffer.BlockCopy(bits, 0, bytes, 0, 16);
+            
+            bytes.ToDecimal().Should().Be(value);
+        }
+    }
 }
