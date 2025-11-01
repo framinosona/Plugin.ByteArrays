@@ -36,6 +36,70 @@ A comprehensive set of utilities for working with byte arrays in .NET applicatio
 
 ---
 
+## 🛠️ Supported Conversion Types
+
+The following table shows all types that can be converted from byte arrays, with support across `byte[]`, `ReadOnlySpan<byte>`, and `ReadOnlyMemory<byte>`:
+
+| **Type** | **Size (bytes)** | **byte[]** | **ReadOnlySpan\<byte\>** | **ReadOnlyMemory\<byte\>** | **Notes** |
+|----------|------------------|------------|--------------------------|----------------------------|-----------|
+| `bool` | 1 | ✅ | ✅ | ➡️ | True[1] or False[0] |
+| `byte` | 1 | ✅ | ✅ | ➡️ | Unsigned 8-bit (0-255) |
+| `sbyte` | 1 | ✅ | ✅ | ➡️ | Signed 8-bit (-128 to 127) |
+| `char` | 2 | ❌ | ✅ | ➡️ | Unicode character |
+| `short` | 2 | ✅ | ✅ | ➡️ | Signed 16-bit (-32,768 to 32,767) |
+| `ushort` | 2 | ✅ | ✅ | ➡️ | Unsigned 16-bit (0 to 65,535) |
+| `int` | 4 | ✅ | ✅ | ➡️ | Signed 32-bit |
+| `uint` | 4 | ✅ | ✅ | ➡️ | Unsigned 32-bit |
+| `long` | 8 | ✅ | ✅ | ➡️ | Signed 64-bit |
+| `ulong` | 8 | ✅ | ✅ | ➡️ | Unsigned 64-bit |
+| `float` | 4 | ✅ | ✅ | ➡️ | Single-precision |
+| `double` | 8 | ✅ | ✅ | ➡️ | Double-precision |
+| `Half` | 2 | ✅ | ✅ | ➡️ | Half-precision |
+| `decimal` | 16 | ❌ | ✅ | ➡️ | High-precision decimal |
+| `DateTime` | 8 | ✅ | ✅ | ➡️ | Binary representation |
+| `TimeSpan` | 8 | ✅ | ✅ | ➡️ | Ticks representation |
+| `DateTimeOffset` | 16/10 | ✅ | ✅ | ➡️ | DateTime + offset |
+| `Guid` | 16 | ✅ | ✅ | ➡️ | UUID/GUID |
+| `string` (UTF-8) | Variable | ✅ | ✅ | ➡️ | UTF-8 encoded |
+| `string` (ASCII) | Variable | ✅ | ✅ | ➡️ | ASCII encoded |
+| `string` (Unicode) | Variable | ✅ | ❌ | ➡️ | Unicode encoded |
+| `string` (Hex) | Variable | ✅ | ✅ | ➡️ | Hexadecimal representation |
+| `string` (Base64) | Variable | ✅ | ✅ | ➡️ | Base64 encoded |
+| `IPAddress` (IPv4) | 4 | ✅ | ✅ | ➡️ | IPv4 address |
+| `IPAddress` (IPv6) | 16 | ✅ | ✅ | ➡️ | IPv6 address |
+| `IPEndPoint` (IPv4) | 6 | ✅ | ❌ | ➡️ | IPv4 address + port |
+| `IPEndPoint` (IPv6) | 18 | ✅ | ❌ | ➡️ | IPv6 address + port |
+| `short` (Big-endian) | 2 | ✅ | ❌ | ➡️ | Network byte order |
+| `ushort` (Big-endian) | 2 | ✅ | ✅ | ➡️ | Network byte order |
+| `int` (Big-endian) | 4 | ✅ | ❌ | ➡️ | Network byte order |
+| `uint` (Big-endian) | 4 | ✅ | ✅ | ➡️ | Network byte order |
+| `long` (Big-endian) | 8 | ✅ | ❌ | ➡️ | Network byte order |
+| `ulong` (Big-endian) | 8 | ✅ | ✅ | ➡️ | Network byte order |
+| `Enum<T>` | 4 | ✅ | ✅ | ➡️ | Any enum type |
+| `Version` | 16 | ✅ | ✅ | ➡️ | .NET Version object |
+| `DateTime` (Unix) | 4 | ✅ | ❌ | ➡️ | Seconds since epoch |
+
+### Legend
+
+- ✅ **Fully Supported** - All conversion methods available
+- ❌ **Not Available** - Type conversion not implemented
+- ➡️ **Via Span** - `ReadOnlyMemory<byte>` uses `.Span` property to access `ReadOnlySpan<byte>` methods
+
+### Method Variants Available
+
+- **Standard**: `ToType(ref position)` and `ToType(position)` - Throws on error
+- **Safe**: `ToTypeOrDefault(ref position, defaultValue)` and `ToTypeOrDefault(position, defaultValue)` - Returns default on error
+
+### Special Features
+
+- **Position Tracking**: `ref int position` parameter automatically advances
+- **Bounds Checking**: All methods validate array/span boundaries
+- **Endianness Support**: Network byte order conversions for multi-byte integers
+- **String Length Handling**: Automatic and manual length specification for strings
+- **Unix Timestamps**: Convert POSIX timestamps to DateTime
+
+---
+
 ## 🛠️ Usage Examples
 
 ### ByteArrayBuilder
@@ -335,13 +399,13 @@ byte[] enumBytes = enumValue.ToByteArray();
 - **Direct Conversion**: `Utf8StringToByteArray`, `HexStringToByteArray`, `ToByteArray<T>`
 - **Object Serialization**: Convert any supported type to byte arrays
 
-### Async Operations
+### Async File Operations
 
 - **File I/O**: `WriteToFileAsync`, `ReadFromFileAsync`, `AppendToFileAsync`
 - **Parallel Processing**: `ProcessInParallelAsync`, `TransformInParallelAsync`
 - **Cryptographic**: `ComputeSha256Async`, `ComputeMd5Async`, `GenerateRandomBytesAsync`
 
-### Compression
+### Compression Utilities
 
 - **Algorithms**: `CompressGZip/DecompressGZip`, `CompressDeflate/DecompressDeflate`, `CompressBrotli/DecompressBrotli`
 - **Utilities**: Compression ratio analysis and format detection
