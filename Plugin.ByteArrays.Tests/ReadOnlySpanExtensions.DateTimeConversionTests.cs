@@ -150,13 +150,12 @@ public class ReadOnlySpanExtensions_DateTimeConversionTests
     {
         // Arrange
         var emptyArray = Array.Empty<byte>();
-        var position = 0;
 
         // Act & Assert
         var act = () =>
         {
             var tempSpan = new ReadOnlySpan<byte>(emptyArray);
-            var tempPos = position;
+            var tempPos = 0;
             return tempSpan.ToDateTimeFromUnixTimestamp(ref tempPos);
         };
         
