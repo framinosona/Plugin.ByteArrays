@@ -177,7 +177,7 @@ public static partial class ByteArrayExtensions
     ///     Size = 16 bytes.
     /// </summary>
     /// <param name="array">The byte array.</param>
-    /// <param name="position">The position within the array. Byref : is auto-incremented by the size of the output type.</param>
+    /// <param name="position">The position within the array. By reference: is auto-incremented by the size of the output type.</param>
     /// <returns>Converted value.</returns>
     public static decimal ToDecimal(this byte[] array, ref int position)
     {
