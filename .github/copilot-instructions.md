@@ -267,8 +267,12 @@ var value = array.ToInt32(ref position);
 
 ### Development Dependencies
 - `xunit` (2.9.3) - Testing framework
-- `FluentAssertions` (7.2.0) - Fluent assertion library
-- `coverlet` (6.0.4) - Code coverage
+- `xunit.runner.visualstudio` (3.1.5) - Visual Studio test adapter
+- `FluentAssertions` (7.2.0) - Fluent assertion library (open source v7)
+- `coverlet.collector` (6.0.4) - Code coverage collector
+- `coverlet.msbuild` (6.0.4) - Code coverage MSBuild integration
+- `Microsoft.NET.Test.Sdk` (18.0.0) - .NET Test SDK
+- `JetBrains.Annotations` (2025.2.0) - JetBrains code annotations
 - `Microsoft.CodeAnalysis.NetAnalyzers` (9.0.0) - Static analysis
 - `Microsoft.SourceLink.GitHub` (8.0.0) - Source link support
 
