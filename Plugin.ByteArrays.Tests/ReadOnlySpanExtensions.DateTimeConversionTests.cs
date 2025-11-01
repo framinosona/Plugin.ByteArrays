@@ -150,7 +150,6 @@ public class ReadOnlySpanExtensions_DateTimeConversionTests
     {
         // Arrange
         var emptyArray = Array.Empty<byte>();
-        ReadOnlySpan<byte> span = emptyArray;
         var position = 0;
 
         // Act & Assert
