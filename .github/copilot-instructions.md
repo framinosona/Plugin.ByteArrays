@@ -303,6 +303,43 @@ When contributing code:
 6. **Null safety** - Handle null inputs appropriately
 7. **Bounds checking** - Always validate array/span boundaries
 
+### Commit Message Format
+
+This repository uses **Conventional Commits** format for commit messages. Follow this pattern:
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Common types:**
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation changes
+- `style` - Code style/formatting (no functional changes)
+- `refactor` - Code refactoring
+- `perf` - Performance improvements
+- `test` - Adding or updating tests
+- `chore` - Maintenance tasks, dependencies, tooling
+
+**Examples:**
+```
+feat(extensions): add ToDecimal conversion method
+fix(builder): handle null values in Append method
+docs(readme): update supported conversion types table
+test(integration): add tests for async file operations
+```
+
+**Guidelines:**
+- Use lowercase for type and scope
+- Keep subject line under 72 characters
+- Use imperative mood ("add" not "added" or "adds")
+- Scope is optional but recommended (e.g., extensions, builder, tests)
+- Breaking changes should include `BREAKING CHANGE:` in footer or `!` after type/scope
+
 ## Common Tasks
 
 ### Adding a New Conversion Type
