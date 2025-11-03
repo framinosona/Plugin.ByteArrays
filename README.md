@@ -45,7 +45,7 @@ The following table shows all types that can be converted from byte arrays, with
 | `bool` | 1 | ✅ | ✅ | ➡️ | True[1] or False[0] |
 | `byte` | 1 | ✅ | ✅ | ➡️ | Unsigned 8-bit (0-255) |
 | `sbyte` | 1 | ✅ | ✅ | ➡️ | Signed 8-bit (-128 to 127) |
-| `char` | 2 | ❌ | ✅ | ➡️ | Unicode character |
+| `char` | 2 | ✅ | ✅ | ➡️ | Unicode character |
 | `short` | 2 | ✅ | ✅ | ➡️ | Signed 16-bit (-32,768 to 32,767) |
 | `ushort` | 2 | ✅ | ✅ | ➡️ | Unsigned 16-bit (0 to 65,535) |
 | `int` | 4 | ✅ | ✅ | ➡️ | Signed 32-bit |
@@ -55,7 +55,7 @@ The following table shows all types that can be converted from byte arrays, with
 | `float` | 4 | ✅ | ✅ | ➡️ | Single-precision |
 | `double` | 8 | ✅ | ✅ | ➡️ | Double-precision |
 | `Half` | 2 | ✅ | ✅ | ➡️ | Half-precision |
-| `decimal` | 16 | ❌ | ✅ | ➡️ | High-precision decimal |
+| `decimal` | 16 | ✅ | ✅ | ➡️ | High-precision decimal |
 | `DateTime` | 8 | ✅ | ✅ | ➡️ | Binary representation |
 | `TimeSpan` | 8 | ✅ | ✅ | ➡️ | Ticks representation |
 | `DateTimeOffset` | 16/10 | ✅ | ✅ | ➡️ | DateTime + offset |
@@ -77,7 +77,7 @@ The following table shows all types that can be converted from byte arrays, with
 | `ulong` (Big-endian) | 8 | ✅ | ✅ | ➡️ | Network byte order |
 | `Enum<T>` | 4 | ✅ | ✅ | ➡️ | Any enum type |
 | `Version` | 16 | ✅ | ✅ | ➡️ | .NET Version object |
-| `DateTime` (Unix) | 4 | ✅ | ❌ | ➡️ | Seconds since epoch |
+| `DateTime` (Unix) | 4 | ✅ | ✅ | ➡️ | Seconds since epoch |
 
 ### Legend
 
