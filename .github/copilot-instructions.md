@@ -144,10 +144,10 @@ public void ToInt32_WithValidData_ReturnsCorrectValue()
     // Arrange
     var array = new byte[] { 0x01, 0x00, 0x00, 0x00 };
     var position = 0;
-    
+
     // Act
     var result = array.ToInt32(ref position);
-    
+
     // Assert
     result.Should().Be(1);
     position.Should().Be(4);
@@ -159,7 +159,7 @@ public void ToInt32_WithInsufficientBytes_ThrowsException(byte[] array, string r
 {
     // Arrange
     var position = 0;
-    
+
     // Act & Assert
     var action = () => array.ToInt32(ref position);
     action.Should().Throw<ArgumentOutOfRangeException>();
@@ -371,9 +371,9 @@ Releases are automated via GitHub Actions:
 
 ## Useful Resources
 
-- **Repository:** https://github.com/framinosona/Plugin.ByteArrays
+- **Repository:** https://github.com/laerdal/Plugin.ByteArrays
 - **NuGet Package:** https://www.nuget.org/packages/Plugin.ByteArrays
-- **Documentation:** https://framinosona.github.io/Plugin.ByteArrays/
+- **Documentation:** https://laerdal.github.io/Plugin.ByteArrays/
 - **.NET Docs:** https://docs.microsoft.com/dotnet/
 - **Span<T> Guide:** https://docs.microsoft.com/dotnet/api/system.span-1
 

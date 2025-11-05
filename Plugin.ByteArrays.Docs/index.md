@@ -364,13 +364,13 @@ var parsedTlv = tlvBytes.ParseTlv(ref pos);
 
 ## 📄 License
 
-This library is licensed under the **MIT License** - see the [LICENSE.md](https://github.com/framinosona/Plugin.ByteArrays/blob/main/LICENSE.md) file for details.
+This library is licensed under the **MIT License** - see the [LICENSE.md](https://github.com/laerdal/Plugin.ByteArrays/blob/main/LICENSE.md) file for details.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests on [GitHub](https://github.com/framinosona/Plugin.ByteArrays).
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests on [GitHub](https://github.com/laerdal/Plugin.ByteArrays).
 
 ---
 
