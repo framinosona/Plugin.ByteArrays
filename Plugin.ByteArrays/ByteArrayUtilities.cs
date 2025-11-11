@@ -84,15 +84,16 @@ public static class ByteArrayUtilities
         }
 
         var result = new System.Text.StringBuilder();
+        var lineBuilder = new System.Text.StringBuilder();
 
         for (var offset = 0; offset < array.Length; offset += bytesPerLine)
         {
-            var line = new System.Text.StringBuilder();
+            lineBuilder.Clear();
 
             // Add offset
             if (showOffsets)
             {
-                line.Append(CultureInfo.InvariantCulture, $"{offset:X8}: ");
+                lineBuilder.Append(CultureInfo.InvariantCulture, $"{offset:X8}: ");
             }
 
             // Add hex bytes
@@ -101,33 +102,33 @@ public static class ByteArrayUtilities
             {
                 if (i < bytesInLine)
                 {
-                    line.Append(CultureInfo.InvariantCulture, $"{array[offset + i]:X2} ");
+                    lineBuilder.Append(CultureInfo.InvariantCulture, $"{array[offset + i]:X2} ");
                 }
                 else
                 {
-                    line.Append("   "); // Space for missing bytes
+                    lineBuilder.Append("   "); // Space for missing bytes
                 }
 
                 // Add extra space in the middle for readability
                 if (i == bytesPerLine / 2 - 1)
                 {
-                    line.Append(' ');
+                    lineBuilder.Append(' ');
                 }
             }
 
             // Add ASCII representation
             if (showAscii)
             {
-                line.Append(" |");
+                lineBuilder.Append(" |");
                 for (var i = 0; i < bytesInLine; i++)
                 {
                     var b = array[offset + i];
-                    line.Append(b >= 32 && b <= 126 ? (char)b : '.');
+                    lineBuilder.Append(b >= 32 && b <= 126 ? (char)b : '.');
                 }
-                line.Append('|');
+                lineBuilder.Append('|');
             }
 
-            result.AppendLine(line.ToString());
+            result.AppendLine(lineBuilder.ToString());
         }
 
         return result.ToString().TrimEnd();
