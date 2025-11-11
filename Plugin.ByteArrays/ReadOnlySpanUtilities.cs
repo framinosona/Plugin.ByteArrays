@@ -54,14 +54,7 @@ public static class ReadOnlySpanUtilities
 
         foreach (var b in span)
         {
-            if (!distribution.TryGetValue(b, out var count))
-            {
-                distribution[b] = 1;
-            }
-            else
-            {
-                distribution[b] = count + 1;
-            }
+            distribution[b] = distribution.TryGetValue(b, out var count) ? count + 1 : 1;
         }
 
         return distribution;
