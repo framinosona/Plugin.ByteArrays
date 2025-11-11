@@ -641,7 +641,7 @@ public class ByteArrayUtilitiesTests
         var data = new byte[10000];
 
         // Act
-        var (result, totalTime, averageTime) = data.MeasurePerformance(
+        var (result, _, averageTime) = data.MeasurePerformance(
             array => array.Sum(b => (int)b),
             iterations: 5);
 
