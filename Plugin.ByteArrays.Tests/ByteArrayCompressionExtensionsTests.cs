@@ -333,7 +333,7 @@ public class ByteArrayCompressionExtensionsTests
         var data = Encoding.UTF8.GetBytes("Test data for finding the best compression algorithm.");
 
         // Act
-        var (bestCompressed, bestAlgorithm) = data.FindBestCompression();
+        var (bestCompressed, _) = data.FindBestCompression();
         var gzipCompressed = data.CompressGZip();
         var deflateCompressed = data.CompressDeflate();
         var brotliCompressed = data.CompressBrotli();
