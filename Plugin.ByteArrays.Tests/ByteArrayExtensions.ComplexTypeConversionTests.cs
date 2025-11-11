@@ -305,7 +305,6 @@ public class ByteArrayExtensions_ComplexTypeConversionTests
     [Fact]
     public void ToEnumOrDefault_Default_Parameter_Behavior()
     {
-        var invalidData = new byte[] { 99 }; // Invalid Color value
         var p = 0;
 
         // Test that the default parameter uses first enum value when method implementation
