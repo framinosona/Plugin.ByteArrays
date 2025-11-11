@@ -437,7 +437,7 @@ public class ObjectToByteArrayExtensionsTests
         // Act
         var result1 = cachedSerializer("test1");
         var result2 = cachedSerializer("test1"); // Should use cache
-        var result3 = cachedSerializer("test2");
+        cachedSerializer("test2");
         var result4 = cachedSerializer("test1"); // Should still use cache
 
         // Assert
