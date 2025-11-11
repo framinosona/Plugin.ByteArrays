@@ -188,9 +188,8 @@ public static class ObjectToByteArrayExtensions
         var items = collection.ToList();
         builder.Append(items.Count); // Write item count
 
-        foreach (var item in items)
+        foreach (var itemBytes in items.Select(itemSerializer))
         {
-            var itemBytes = itemSerializer(item);
             builder.Append((ushort)itemBytes.Length); // Write item length
             builder.Append(itemBytes); // Write item data
         }
